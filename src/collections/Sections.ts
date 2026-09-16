@@ -22,10 +22,12 @@ export const sectionsSlug = 'sections' as const
 
 export const Sections: CollectionConfig = {
   slug: sectionsSlug,
+  labels: { singular: 'Global Component', plural: 'Global Components' },
   admin: {
     group: 'Pages',
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
+    hidden: true,
     ...inlinePreviewAdmin,
   },
   access: {
