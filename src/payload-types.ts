@@ -440,6 +440,7 @@ export interface Section {
         backgroundImage: number | Media;
         heading: string;
         headingSize: 'title' | 'display';
+        textAlign: 'left' | 'center';
         id?: string | null;
         blockName?: string | null;
         blockType: 'photoHeadingBand';
@@ -698,6 +699,7 @@ export interface Page {
         backgroundImage: number | Media;
         heading: string;
         headingSize: 'title' | 'display';
+        textAlign: 'left' | 'center';
         id?: string | null;
         blockName?: string | null;
         blockType: 'photoHeadingBand';
@@ -1184,6 +1186,7 @@ export interface SectionsSelect<T extends boolean = true> {
               backgroundImage?: T;
               heading?: T;
               headingSize?: T;
+              textAlign?: T;
               id?: T;
               blockName?: T;
             };
@@ -1471,6 +1474,7 @@ export interface PagesSelect<T extends boolean = true> {
               backgroundImage?: T;
               heading?: T;
               headingSize?: T;
+              textAlign?: T;
               id?: T;
               blockName?: T;
             };
