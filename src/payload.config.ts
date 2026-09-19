@@ -55,6 +55,13 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Logo: '/admin/Logo#default',
+        Icon: '/admin/Icon#default',
+      },
+      beforeLogin: ['/admin/LoginAccent#default'],
+    },
     livePreview: {
       url: ({ collectionConfig, data, locale }) => {
         if (collectionConfig?.slug === Pages.slug && typeof data.slug === 'string') {

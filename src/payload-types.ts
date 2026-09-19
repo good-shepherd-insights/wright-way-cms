@@ -202,28 +202,241 @@ export interface Section {
    */
   slug: string;
   title: string;
-  sections: {
-    logo: number | Media;
-    searchPlaceholder: string;
-    searchAction: string;
-    servicesLabel: string;
-    servicesHref: string;
-    callLabel: string;
-    callHref: string;
-    primaryLabel: string;
-    primaryHref: string;
-    brandLabel?: string | null;
-    links?:
-      | {
-          label?: string | null;
-          href?: string | null;
+  sections: (
+    | {
+        logo: number | Media;
+        searchPlaceholder: string;
+        searchAction: string;
+        servicesLabel: string;
+        servicesHref: string;
+        callLabel: string;
+        callHref: string;
+        primaryLabel: string;
+        primaryHref: string;
+        howItWorksLabel: string;
+        howItWorksHref: string;
+        faqsLabel: string;
+        faqsHref: string;
+        contactLabel: string;
+        contactHref: string;
+        facebookHref: string;
+        instagramHref: string;
+        brandLabel?: string | null;
+        links?:
+          | {
+              label?: string | null;
+              href?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'navbar';
+      }
+    | {
+        text: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'announcementBar';
+      }
+    | {
+        backgroundImage: number | Media;
+        headlineLine1: string;
+        headlineLine2: string;
+        reviewEyebrow: string;
+        reviewHeading: string;
+        reviewerName: string;
+        reviewText: string;
+        reviewButtonLabel: string;
+        reviewButtonHref: string;
+        poweredByLabel: string;
+        searchPlaceholder: string;
+        searchAction: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        heading: string;
+        pills: {
+          label: string;
+          href: string;
           id?: string | null;
-        }[]
-      | null;
-    id?: string | null;
-    blockName?: string | null;
-    blockType: 'navbar';
-  }[];
+        }[];
+        bullets: {
+          label: string;
+          id?: string | null;
+        }[];
+        learnMoreLabel: string;
+        learnMoreHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicesOverview';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        junkRemovalLabel: string;
+        cleanoutsLabel: string;
+        lightDemolitionsLabel: string;
+        locationLine1: string;
+        locationLine2: string;
+        callLabel: string;
+        callHref: string;
+        bookUsNowLabel: string;
+        bookUsNowHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'serviceHighlightsStrip';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        missionParagraph1: string;
+        missionParagraph2: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourMission';
+      }
+    | {
+        heading: string;
+        steps: {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[];
+        bookUsNowLabel: string;
+        bookUsNowHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'howItWorks';
+      }
+    | {
+        taglineLine1: string;
+        taglineLine2: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'brandDivider1';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        residentialLabel: string;
+        commercialLabel: string;
+        lightDemolitionLabel: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourServicesTriptych';
+      }
+    | {
+        heading: string;
+        watermarkLogo: number | Media;
+        items: {
+          beforeImage: number | Media;
+          afterImage: number | Media;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourResults';
+      }
+    | {
+        heading: string;
+        towns: {
+          label: string;
+          column: 'main' | 'map';
+          id?: string | null;
+        }[];
+        mapEmbedUrl: string;
+        mapLinkHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'areasWeServe';
+      }
+    | {
+        heading: string;
+        items: {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'faqAccordion';
+      }
+    | {
+        taglineLine1: string;
+        taglineLine2: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'brandDivider2';
+      }
+    | {
+        heading: string;
+        introLine1: string;
+        introLine2: string;
+        introNote: string;
+        stepsHeading: string;
+        stepsIcon: number | Media;
+        hoursHeading: string;
+        hours: {
+          day: string;
+          hours: string;
+          id?: string | null;
+        }[];
+        tellUsMoreLabel: string;
+        searchPlaceholder: string;
+        categories: {
+          label: string;
+          id?: string | null;
+        }[];
+        nextMonthLabel: string;
+        nextMonthHref: string;
+        availableLabel: string;
+        selectedLabel: string;
+        closedLegendLabel: string;
+        /**
+         * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+         */
+        weeklyTemplate: {
+          dayLabel: string;
+          closed: boolean;
+          closedLabel: string;
+          slots?:
+            | {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[];
+        detailsLabel: string;
+        detailsPlaceholder: string;
+        uploadLabel: string;
+        submitLabel: string;
+        formAction: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contactUs';
+      }
+    | {
+        servicesLabel: string;
+        servicesHref: string;
+        privacyLabel: string;
+        privacyHref: string;
+        termsLabel: string;
+        termsHref: string;
+        facebookHref: string;
+        instagramHref: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'footer';
+      }
+  )[];
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -239,34 +452,251 @@ export interface Page {
    */
   slug: string;
   title: string;
+  sections: (
+    | {
+        logo: number | Media;
+        searchPlaceholder: string;
+        searchAction: string;
+        servicesLabel: string;
+        servicesHref: string;
+        callLabel: string;
+        callHref: string;
+        primaryLabel: string;
+        primaryHref: string;
+        howItWorksLabel: string;
+        howItWorksHref: string;
+        faqsLabel: string;
+        faqsHref: string;
+        contactLabel: string;
+        contactHref: string;
+        facebookHref: string;
+        instagramHref: string;
+        brandLabel?: string | null;
+        links?:
+          | {
+              label?: string | null;
+              href?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'navbar';
+      }
+    | {
+        text: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'announcementBar';
+      }
+    | {
+        backgroundImage: number | Media;
+        headlineLine1: string;
+        headlineLine2: string;
+        reviewEyebrow: string;
+        reviewHeading: string;
+        reviewerName: string;
+        reviewText: string;
+        reviewButtonLabel: string;
+        reviewButtonHref: string;
+        poweredByLabel: string;
+        searchPlaceholder: string;
+        searchAction: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        heading: string;
+        pills: {
+          label: string;
+          href: string;
+          id?: string | null;
+        }[];
+        bullets: {
+          label: string;
+          id?: string | null;
+        }[];
+        learnMoreLabel: string;
+        learnMoreHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicesOverview';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        junkRemovalLabel: string;
+        cleanoutsLabel: string;
+        lightDemolitionsLabel: string;
+        locationLine1: string;
+        locationLine2: string;
+        callLabel: string;
+        callHref: string;
+        bookUsNowLabel: string;
+        bookUsNowHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'serviceHighlightsStrip';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        missionParagraph1: string;
+        missionParagraph2: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourMission';
+      }
+    | {
+        heading: string;
+        steps: {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[];
+        bookUsNowLabel: string;
+        bookUsNowHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'howItWorks';
+      }
+    | {
+        taglineLine1: string;
+        taglineLine2: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'brandDivider1';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        residentialLabel: string;
+        commercialLabel: string;
+        lightDemolitionLabel: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourServicesTriptych';
+      }
+    | {
+        heading: string;
+        watermarkLogo: number | Media;
+        items: {
+          beforeImage: number | Media;
+          afterImage: number | Media;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ourResults';
+      }
+    | {
+        heading: string;
+        towns: {
+          label: string;
+          column: 'main' | 'map';
+          id?: string | null;
+        }[];
+        mapEmbedUrl: string;
+        mapLinkHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'areasWeServe';
+      }
+    | {
+        heading: string;
+        items: {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'faqAccordion';
+      }
+    | {
+        taglineLine1: string;
+        taglineLine2: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'brandDivider2';
+      }
+    | {
+        heading: string;
+        introLine1: string;
+        introLine2: string;
+        introNote: string;
+        stepsHeading: string;
+        stepsIcon: number | Media;
+        hoursHeading: string;
+        hours: {
+          day: string;
+          hours: string;
+          id?: string | null;
+        }[];
+        tellUsMoreLabel: string;
+        searchPlaceholder: string;
+        categories: {
+          label: string;
+          id?: string | null;
+        }[];
+        nextMonthLabel: string;
+        nextMonthHref: string;
+        availableLabel: string;
+        selectedLabel: string;
+        closedLegendLabel: string;
+        /**
+         * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+         */
+        weeklyTemplate: {
+          dayLabel: string;
+          closed: boolean;
+          closedLabel: string;
+          slots?:
+            | {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[];
+        detailsLabel: string;
+        detailsPlaceholder: string;
+        uploadLabel: string;
+        submitLabel: string;
+        formAction: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contactUs';
+      }
+    | {
+        servicesLabel: string;
+        servicesHref: string;
+        privacyLabel: string;
+        privacyHref: string;
+        termsLabel: string;
+        termsHref: string;
+        facebookHref: string;
+        instagramHref: string;
+        logo: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'footer';
+      }
+  )[];
+  /**
+   * Global components (from SiteGlobals.components) to hide on this page only.
+   */
+  hiddenGlobalComponents?: (number | Section)[] | null;
   metadata: {
     /**
      * Use exactly one {title} placeholder for the localized page title.
      */
     titleTemplate: string;
   };
-  sections: {
-    logo: number | Media;
-    searchPlaceholder: string;
-    searchAction: string;
-    servicesLabel: string;
-    servicesHref: string;
-    callLabel: string;
-    callHref: string;
-    primaryLabel: string;
-    primaryHref: string;
-    brandLabel?: string | null;
-    links?:
-      | {
-          label?: string | null;
-          href?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    id?: string | null;
-    blockName?: string | null;
-    blockType: 'navbar';
-  }[];
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -481,6 +911,14 @@ export interface SectionsSelect<T extends boolean = true> {
               callHref?: T;
               primaryLabel?: T;
               primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
               brandLabel?: T;
               links?:
                 | T
@@ -489,6 +927,238 @@ export interface SectionsSelect<T extends boolean = true> {
                     href?: T;
                     id?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              availableLabel?: T;
+              selectedLabel?: T;
+              closedLegendLabel?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
               id?: T;
               blockName?: T;
             };
@@ -504,11 +1174,6 @@ export interface SectionsSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   slug?: T;
   title?: T;
-  metadata?:
-    | T
-    | {
-        titleTemplate?: T;
-      };
   sections?:
     | T
     | {
@@ -524,6 +1189,14 @@ export interface PagesSelect<T extends boolean = true> {
               callHref?: T;
               primaryLabel?: T;
               primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
               brandLabel?: T;
               links?:
                 | T
@@ -535,6 +1208,244 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              availableLabel?: T;
+              selectedLabel?: T;
+              closedLegendLabel?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  hiddenGlobalComponents?: T;
+  metadata?:
+    | T
+    | {
+        titleTemplate?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -613,23 +1524,13 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface SiteGlobal {
   id: number;
-  brand: {
-    logo: number | Media;
-    logoAlt: string;
+  brand?: {
+    logo?: (number | null) | Media;
+    logoAlt?: string | null;
     /**
      * Browser tab and app icon for the public website.
      */
-    favicon: number | Media;
-  };
-  accessibility: {
-    primaryNavLabel: string;
-    homeLinkSuffix: string;
-    skipToContentLabel: string;
-    menuLabel: string;
-    /**
-     * Use {language} to insert the target language's own name.
-     */
-    languageSwitchAriaLabelTemplate: string;
+    favicon?: (number | null) | Media;
   };
   components?:
     | {
@@ -655,15 +1556,6 @@ export interface SiteGlobalsSelect<T extends boolean = true> {
         logo?: T;
         logoAlt?: T;
         favicon?: T;
-      };
-  accessibility?:
-    | T
-    | {
-        primaryNavLabel?: T;
-        homeLinkSuffix?: T;
-        skipToContentLabel?: T;
-        menuLabel?: T;
-        languageSwitchAriaLabelTemplate?: T;
       };
   components?:
     | T
