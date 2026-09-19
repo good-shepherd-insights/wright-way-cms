@@ -436,6 +436,14 @@ export interface Section {
         blockName?: string | null;
         blockType: 'footer';
       }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        headingSize: 'title' | 'display';
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'photoHeadingBand';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -685,6 +693,14 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'footer';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        headingSize: 'title' | 'display';
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'photoHeadingBand';
       }
   )[];
   /**
@@ -1162,6 +1178,15 @@ export interface SectionsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              headingSize?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1437,6 +1462,15 @@ export interface PagesSelect<T extends boolean = true> {
               facebookHref?: T;
               instagramHref?: T;
               logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              headingSize?: T;
               id?: T;
               blockName?: T;
             };
