@@ -436,6 +436,48 @@ export interface Section {
         blockName?: string | null;
         blockType: 'footer';
       }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        headingSize: 'title' | 'display';
+        textAlign: 'left' | 'center';
+        /**
+         * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+         */
+        overlayColor: 'none' | '#35ba57' | '#000000';
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'photoHeadingBand';
+      }
+    | {
+        headline: string;
+        paragraph: string;
+        buttonLabel: string;
+        buttonHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'whatDoYouNeed';
+      }
+    | {
+        residentialLabel: string;
+        sameDayLabel: string;
+        noHeavyLiftingLabel: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'highlightBar';
+      }
+    | {
+        items: {
+          label: string;
+          description: string;
+          buttonLabel: string;
+          buttonHref: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicesSelector';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -685,6 +727,48 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'footer';
+      }
+    | {
+        backgroundImage: number | Media;
+        heading: string;
+        headingSize: 'title' | 'display';
+        textAlign: 'left' | 'center';
+        /**
+         * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+         */
+        overlayColor: 'none' | '#35ba57' | '#000000';
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'photoHeadingBand';
+      }
+    | {
+        headline: string;
+        paragraph: string;
+        buttonLabel: string;
+        buttonHref: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'whatDoYouNeed';
+      }
+    | {
+        residentialLabel: string;
+        sameDayLabel: string;
+        noHeavyLiftingLabel: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'highlightBar';
+      }
+    | {
+        items: {
+          label: string;
+          description: string;
+          buttonLabel: string;
+          buttonHref: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicesSelector';
       }
   )[];
   /**
@@ -1162,6 +1246,51 @@ export interface SectionsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1437,6 +1566,51 @@ export interface PagesSelect<T extends boolean = true> {
               facebookHref?: T;
               instagramHref?: T;
               logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };

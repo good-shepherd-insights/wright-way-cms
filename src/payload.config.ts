@@ -29,9 +29,11 @@ const dirname = path.dirname(filename)
 
 const siteBaseURL = `${siteOrigin}/`
 
-function getAstroPreviewURL(localeCode: string, slug?: string) {
-  let path = `${localeCode}/${encodeURIComponent(slug || '')}`
-  if (slug === 'home') path = localeCode === defaultLocale ? '' : `${localeCode}/`
+// The website has no locale-prefixed routes — CMS_LOCALES is a single
+// locale ("en") used only for Payload's field-level localization, not URL
+// routing. Never prefix the preview URL with a locale code.
+function getAstroPreviewURL(slug?: string) {
+  const path = slug === 'home' ? '' : encodeURIComponent(slug || '')
 
   return new URL(path, siteBaseURL).toString()
 }
@@ -63,9 +65,9 @@ export default buildConfig({
       beforeLogin: ['/admin/LoginAccent#default'],
     },
     livePreview: {
-      url: ({ collectionConfig, data, locale }) => {
+      url: ({ collectionConfig, data }) => {
         if (collectionConfig?.slug === Pages.slug && typeof data.slug === 'string') {
-          return getAstroPreviewURL(locale.code, data.slug)
+          return getAstroPreviewURL(data.slug)
         }
 
         return siteOrigin
