@@ -1727,6 +1727,10 @@ export interface SiteGlobal {
      * Browser tab and app icon for the public website.
      */
     favicon?: (string | null) | Media;
+    /**
+     * Share image for links to the public website (1200×630). Falls back to the logo.
+     */
+    ogImage?: (string | null) | Media;
   };
   components?:
     | {
@@ -1752,6 +1756,7 @@ export interface SiteGlobalsSelect<T extends boolean = true> {
         logo?: T;
         logoAlt?: T;
         favicon?: T;
+        ogImage?: T;
       };
   components?:
     | T

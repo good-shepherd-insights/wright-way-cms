@@ -54,6 +54,15 @@ export default buildConfig({
   ],
   admin: {
     user: Users.slug,
+    meta: {
+      titleSuffix: '- Wright Way CMS',
+      description: 'Content management for Wright Way Junk Removal.',
+      // replaces Payload's defaults ("Payload App" and its generated /api/og image)
+      openGraph: {
+        siteName: 'Wright Way CMS',
+        description: 'Content management for Wright Way Junk Removal.',
+      },
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
