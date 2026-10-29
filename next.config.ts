@@ -8,6 +8,11 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['wrightway-cms.goodshepherdinsights.com'],
+  // the CMS has no public pages: its root opens the admin panel, which shows
+  // the dashboard or sends signed-out visitors to the login
+  redirects() {
+    return [{ source: '/', destination: '/admin', permanent: false }]
+  },
   images: {
     localPatterns: [
       {

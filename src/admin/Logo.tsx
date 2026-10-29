@@ -1,12 +1,18 @@
-// Real Wright Way logo — the white variant (media id 4, the same asset
-// the site's own footer uses on its green background), for the inverted
-// all-green login screen, in place of Payload's default wordmark.
-export default function Logo() {
+import type { Payload } from 'payload'
+import { PayloadLogo } from '@payloadcms/ui/shared'
+
+import { brandGraphic } from './brandGraphic'
+
+// Login-screen logo: the site global's brand.logo, or Payload's default.
+export default async function Logo({ payload }: { payload: Payload }) {
+  const graphic = await brandGraphic(payload, 'logo')
+  if (!graphic) return <PayloadLogo />
+
   return (
     <img
-      src="/api/media/file/wright-way-logo-1.svg"
-      alt="Wright Way Junk Removal"
-      style={{ display: 'block', height: '144px', width: 'auto', margin: '0 auto' }}
+      src={graphic.src}
+      alt={graphic.alt}
+      style={{ display: 'block', maxHeight: '144px', maxWidth: '100%', width: 'auto', margin: '0 auto' }}
     />
   )
 }

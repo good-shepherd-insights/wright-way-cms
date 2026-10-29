@@ -91,7 +91,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
   globals: {
@@ -151,8 +151,19 @@ export interface PayloadMcpApiKeyAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   name?: string | null;
+  passkeys?:
+    | {
+        credentialID: string;
+        publicKey: string;
+        counter: number;
+        transports?: string[] | null;
+        label?: string | null;
+        addedAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -177,7 +188,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -196,7 +207,7 @@ export interface Media {
  * via the `definition` "sections".
  */
 export interface Section {
-  id: number;
+  id: string;
   /**
    * Unique key for this reusable section bundle. Referenced by the site global's curated components list.
    */
@@ -204,7 +215,7 @@ export interface Section {
   title: string;
   sections: (
     | {
-        logo: number | Media;
+        logo: string | Media;
         searchPlaceholder: string;
         searchAction: string;
         servicesLabel: string;
@@ -240,7 +251,7 @@ export interface Section {
         blockType: 'announcementBar';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         headlineLine1: string;
         headlineLine2: string;
         reviewEyebrow: string;
@@ -274,7 +285,7 @@ export interface Section {
         blockType: 'servicesOverview';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         junkRemovalLabel: string;
         cleanoutsLabel: string;
@@ -290,7 +301,7 @@ export interface Section {
         blockType: 'serviceHighlightsStrip';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         missionParagraph1: string;
         missionParagraph2: string;
@@ -314,13 +325,13 @@ export interface Section {
     | {
         taglineLine1: string;
         taglineLine2: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'brandDivider1';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         residentialLabel: string;
         commercialLabel: string;
@@ -331,10 +342,10 @@ export interface Section {
       }
     | {
         heading: string;
-        watermarkLogo: number | Media;
+        watermarkLogo: string | Media;
         items: {
-          beforeImage: number | Media;
-          afterImage: number | Media;
+          beforeImage: string | Media;
+          afterImage: string | Media;
           id?: string | null;
         }[];
         id?: string | null;
@@ -368,7 +379,7 @@ export interface Section {
     | {
         taglineLine1: string;
         taglineLine2: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'brandDivider2';
@@ -379,7 +390,7 @@ export interface Section {
         introLine2: string;
         introNote: string;
         stepsHeading: string;
-        stepsIcon: number | Media;
+        stepsIcon: string | Media;
         hoursHeading: string;
         hours: {
           day: string;
@@ -431,13 +442,13 @@ export interface Section {
         termsHref: string;
         facebookHref: string;
         instagramHref: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'footer';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         headingSize: 'title' | 'display';
         textAlign: 'left' | 'center';
@@ -488,15 +499,15 @@ export interface Section {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number;
+  id: string;
   /**
-   * Shared route key. Example: about → /<locale>/about.
+   * Shared route key. Example: about → /about in the default locale, /<locale>/about otherwise.
    */
   slug: string;
   title: string;
   sections: (
     | {
-        logo: number | Media;
+        logo: string | Media;
         searchPlaceholder: string;
         searchAction: string;
         servicesLabel: string;
@@ -532,7 +543,7 @@ export interface Page {
         blockType: 'announcementBar';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         headlineLine1: string;
         headlineLine2: string;
         reviewEyebrow: string;
@@ -566,7 +577,7 @@ export interface Page {
         blockType: 'servicesOverview';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         junkRemovalLabel: string;
         cleanoutsLabel: string;
@@ -582,7 +593,7 @@ export interface Page {
         blockType: 'serviceHighlightsStrip';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         missionParagraph1: string;
         missionParagraph2: string;
@@ -606,13 +617,13 @@ export interface Page {
     | {
         taglineLine1: string;
         taglineLine2: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'brandDivider1';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         residentialLabel: string;
         commercialLabel: string;
@@ -623,10 +634,10 @@ export interface Page {
       }
     | {
         heading: string;
-        watermarkLogo: number | Media;
+        watermarkLogo: string | Media;
         items: {
-          beforeImage: number | Media;
-          afterImage: number | Media;
+          beforeImage: string | Media;
+          afterImage: string | Media;
           id?: string | null;
         }[];
         id?: string | null;
@@ -660,7 +671,7 @@ export interface Page {
     | {
         taglineLine1: string;
         taglineLine2: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'brandDivider2';
@@ -671,7 +682,7 @@ export interface Page {
         introLine2: string;
         introNote: string;
         stepsHeading: string;
-        stepsIcon: number | Media;
+        stepsIcon: string | Media;
         hoursHeading: string;
         hours: {
           day: string;
@@ -723,13 +734,13 @@ export interface Page {
         termsHref: string;
         facebookHref: string;
         instagramHref: string;
-        logo: number | Media;
+        logo: string | Media;
         id?: string | null;
         blockName?: string | null;
         blockType: 'footer';
       }
     | {
-        backgroundImage: number | Media;
+        backgroundImage: string | Media;
         heading: string;
         headingSize: 'title' | 'display';
         textAlign: 'left' | 'center';
@@ -774,7 +785,7 @@ export interface Page {
   /**
    * Global components (from SiteGlobals.components) to hide on this page only.
    */
-  hiddenGlobalComponents?: (number | Section)[] | null;
+  hiddenGlobalComponents?: (string | Section)[] | null;
   metadata: {
     /**
      * Use exactly one {title} placeholder for the localized page title.
@@ -792,11 +803,11 @@ export interface Page {
  * via the `definition` "payload-mcp-api-keys".
  */
 export interface PayloadMcpApiKey {
-  id: number;
+  id: string;
   /**
    * The user that the API key is associated with.
    */
-  user: number | User;
+  user: string | User;
   /**
    * A useful label for the API key.
    */
@@ -841,7 +852,7 @@ export interface PayloadMcpApiKey {
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number;
+  id: string;
   key: string;
   data:
     | {
@@ -858,37 +869,37 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
+        value: string | Media;
       } | null)
     | ({
         relationTo: 'sections';
-        value: number | Section;
+        value: string | Section;
       } | null)
     | ({
         relationTo: 'pages';
-        value: number | Page;
+        value: string | Page;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
+        value: string | PayloadMcpApiKey;
       } | null);
   globalSlug?: string | null;
   user:
     | {
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       }
     | {
         relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
+        value: string | PayloadMcpApiKey;
       };
   updatedAt: string;
   createdAt: string;
@@ -898,15 +909,15 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user:
     | {
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       }
     | {
         relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
+        value: string | PayloadMcpApiKey;
       };
   key?: string | null;
   value?:
@@ -926,7 +937,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -938,6 +949,17 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  passkeys?:
+    | T
+    | {
+        credentialID?: T;
+        publicKey?: T;
+        counter?: T;
+        transports?: T;
+        label?: T;
+        addedAt?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1697,21 +1719,25 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "site-globals".
  */
 export interface SiteGlobal {
-  id: number;
+  id: string;
   brand?: {
-    logo?: (number | null) | Media;
+    logo?: (string | null) | Media;
     logoAlt?: string | null;
     /**
      * Browser tab and app icon for the public website.
      */
-    favicon?: (number | null) | Media;
+    favicon?: (string | null) | Media;
+    /**
+     * Share image for links to the public website (1200×630). Falls back to the logo.
+     */
+    ogImage?: (string | null) | Media;
   };
   components?:
     | {
         /**
          * A reusable component document; its sections render globally on every page, in this order.
          */
-        component: number | Section;
+        component: string | Section;
         id?: string | null;
       }[]
     | null;
@@ -1730,6 +1756,7 @@ export interface SiteGlobalsSelect<T extends boolean = true> {
         logo?: T;
         logoAlt?: T;
         favicon?: T;
+        ogImage?: T;
       };
   components?:
     | T
