@@ -1,4 +1,4 @@
-import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -15,11 +15,10 @@ import { Pages } from './collections/Pages'
 import {
   blobReadWriteToken,
   cmsOrigin,
-  databasePush,
   defaultLocale,
   locales,
   payloadSecret,
-  postgresUrl,
+  mongodbUrl,
   siteGlobalSlug,
   siteOrigin,
 } from './config/runtime'
@@ -29,13 +28,14 @@ const dirname = path.dirname(filename)
 
 const siteBaseURL = `${siteOrigin}/`
 
-// The website has no locale-prefixed routes — CMS_LOCALES is a single
-// locale ("en") used only for Payload's field-level localization, not URL
-// routing. Never prefix the preview URL with a locale code.
-function getAstroPreviewURL(slug?: string) {
-  const path = slug === 'home' ? '' : encodeURIComponent(slug || '')
+// Mirrors the website's route shape (Astro i18n, prefixDefaultLocale: false):
+// the default locale is unprefixed for every page (`/`, `/<slug>`), other
+// locales are prefixed (`/<locale>/`, `/<locale>/<slug>`).
+function getAstroPreviewURL(localeCode: string, slug?: string) {
+  const prefix = localeCode === defaultLocale ? '' : `${localeCode}/`
+  const page = slug === 'home' ? '' : encodeURIComponent(slug || '')
 
-  return new URL(path, siteBaseURL).toString()
+  return new URL(`${prefix}${page}`, siteBaseURL).toString()
 }
 
 export default buildConfig({
@@ -63,11 +63,12 @@ export default buildConfig({
         Icon: '/admin/Icon#default',
       },
       beforeLogin: ['/admin/LoginAccent#default'],
+      afterLogin: ['/admin/PasskeyLogin#default'],
     },
     livePreview: {
-      url: ({ collectionConfig, data }) => {
+      url: ({ collectionConfig, data, locale }) => {
         if (collectionConfig?.slug === Pages.slug && typeof data.slug === 'string') {
-          return getAstroPreviewURL(data.slug)
+          return getAstroPreviewURL(locale.code, data.slug)
         }
 
         return siteOrigin
@@ -99,11 +100,8 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: vercelPostgresAdapter({
-    pool: {
-      connectionString: postgresUrl,
-    },
-    push: databasePush,
+  db: mongooseAdapter({
+    url: mongodbUrl,
   }),
   sharp,
   plugins: [

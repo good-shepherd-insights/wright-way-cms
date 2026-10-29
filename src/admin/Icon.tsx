@@ -1,13 +1,19 @@
-// Real Wright Way logo in place of Payload's default nav icon. Real bug,
-// fixed: a fixed height + auto width on this 205x71 wordmark rendered
-// ~69px wide inside Payload's small square icon slot, overflowing it.
-// object-fit: contain scales it down to actually fit that square space
-// instead of forcing its own aspect ratio into it.
-export default function Icon() {
+import type { Payload } from 'payload'
+import { PayloadIcon } from '@payloadcms/ui/shared'
+
+import { brandGraphic } from './brandGraphic'
+
+// Nav icon: the site global's brand.favicon (brand.logo if unset), or
+// Payload's default. object-fit: contain keeps a wide logo inside Payload's
+// small square icon slot instead of overflowing it.
+export default async function Icon({ payload }: { payload: Payload }) {
+  const graphic = await brandGraphic(payload, 'favicon')
+  if (!graphic) return <PayloadIcon />
+
   return (
     <img
-      src="/api/media/file/wright-way-logo.svg"
-      alt="Wright Way"
+      src={graphic.src}
+      alt={graphic.alt}
       style={{ display: 'block', height: '100%', width: '100%', objectFit: 'contain' }}
     />
   )

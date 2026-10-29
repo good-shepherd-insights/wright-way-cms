@@ -131,7 +131,7 @@ export const Pages: CollectionConfig = {
         return true
       },
       admin: {
-        description: 'Shared route key. Example: about → /<locale>/about.',
+        description: 'Shared route key. Example: about → /about in the default locale, /<locale>/about otherwise.',
         position: 'sidebar',
       },
     },
