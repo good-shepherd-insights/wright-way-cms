@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { sharedBlocks } from '@good-shepherd-insights/website-components/payload'
 
 import { inlinePreviewAdmin } from '../admin/livePreviewConfig'
+import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 
 const reservedSlugs = new Set(['admin', 'api', 'robots.txt'])
 
@@ -37,7 +38,7 @@ export const Sections: CollectionConfig = {
     ...inlinePreviewAdmin,
   },
   access: {
-    read: () => true,
+    read: authenticatedOrPublished,
   },
   versions: {
     drafts: true,

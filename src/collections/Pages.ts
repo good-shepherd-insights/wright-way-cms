@@ -6,6 +6,7 @@ import { inlinePreviewAdmin } from '../admin/livePreviewConfig'
 import { sectionsSlug } from './Sections'
 
 import { websiteDeployWebhook } from '../config/runtime'
+import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 
 const reservedSlugs = new Set(['admin', 'api', 'robots.txt'])
 
@@ -69,10 +70,10 @@ export const Pages: CollectionConfig = {
     ...inlinePreviewAdmin,
   },
   access: {
-    read: () => true,
+    read: authenticatedOrPublished,
   },
   versions: {
-    drafts: true,
+    drafts: { autosave: { interval: 800 } },
   },
   hooks: {
     beforeOperation: [
