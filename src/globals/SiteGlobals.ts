@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 
 import { inlinePreviewAdmin } from '../admin/livePreviewConfig'
 import { siteGlobalSlug } from '../config/runtime'
@@ -17,7 +18,7 @@ const brand = {
 }
 
 export const SiteGlobals: GlobalConfig = {
-  slug, label: 'Site Globals', access: { read: () => true },
+  slug, label: 'Site Globals', access: { read: authenticatedOrPublished },
   versions: { drafts: { autosave: { interval: 800 } } },
   admin: {
     group: 'Pages',

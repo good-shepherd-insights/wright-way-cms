@@ -2,6 +2,7 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
+import { parseCookies } from 'payload/shared'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { fileURLToPath } from 'url'
@@ -75,7 +76,18 @@ export default buildConfig({
       afterLogin: ['/admin/PasskeyLogin#default'],
     },
     livePreview: {
-      url: ({ collectionConfig, data, locale }) => {
+      url: ({ collectionConfig, data, locale, req }) => {
+        // Every preview goes through the site's on-request /preview route,
+        // which reads the latest drafts with the editor's own login token (the
+        // CMS cookie never reaches the CMS from the site's domain). This runs
+        // on the CMS server during the editor's own admin request, so the
+        // cookie is first-party here. A page previews itself; the site global
+        // and global components preview on the home page.
+        const token = parseCookies(req.headers).get(`${req.payload.config.cookiePrefix}-token`)
+        const slug = collectionConfig?.slug === Pages.slug ? data.slug : 'home'
+        if (token && typeof slug === 'string' && slug) {
+          return `${siteOrigin}/preview?${new URLSearchParams({ slug, locale: locale.code, token })}`
+        }
         if (collectionConfig?.slug === Pages.slug && typeof data.slug === 'string') {
           return getAstroPreviewURL(locale.code, data.slug)
         }
@@ -104,7 +116,7 @@ export default buildConfig({
   // it's not trusted automatically once you customize this array. Without
   // it, the admin panel's own same-origin requests (e.g. "Publish changes")
   // fail cookie auth and get "You are not allowed to perform this action."
-  csrf: [siteOrigin, cmsOrigin],
+  csrf: [cmsOrigin],
   secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
