@@ -154,6 +154,8 @@ export default buildConfig({
   plugins: [
     servicesPlugin({
       adminGroup: 'Services',
+      // Each type's globals under Globals, named by the type: Services, Service Areas, Services in Areas.
+      globals: { group: 'Globals', label: (labels) => labels.plural },
       blocks: [...sharedBlocks],
       combinations: [
         {
