@@ -56,6 +56,13 @@ function getAstroPreviewURL(localeCode: string, slug?: string) {
 }
 
 export default buildConfig({
+  // Payload seeds two sidebar groups at the very top, "Collections" and
+  // "Globals" (general:collections / general:globals), and merges any group
+  // with the same name into them. Renaming its unused default Globals group
+  // lets our own "Globals" group (every global sets admin.group) take its
+  // natural place at the bottom of the sidebar, after the collection groups.
+  // groupNavItems is the only place Payload uses this label.
+  i18n: { translations: { en: { general: { globals: 'Other globals' } } } },
   endpoints: [
     {
       path: '/locales',
