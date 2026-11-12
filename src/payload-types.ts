@@ -72,18 +72,31 @@ export interface Config {
     media: Media;
     sections: Section;
     pages: Page;
+    'service-areas': ServiceArea;
+    services: Service;
+    'service-area-services': ServiceAreaService;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    'service-areas': {
+      serviceAreaServicesByParent: 'service-area-services';
+    };
+    services: {
+      serviceAreaServicesByChild: 'service-area-services';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     sections: SectionsSelect<false> | SectionsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'service-areas': ServiceAreasSelect<false> | ServiceAreasSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    'service-area-services': ServiceAreaServicesSelect<false> | ServiceAreaServicesSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -96,9 +109,15 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'en' | 'en'[];
   globals: {
     'site-globals': SiteGlobal;
+    'service-areas-template': ServiceAreasTemplate;
+    'services-template': ServicesTemplate;
+    'service-area-services-template': ServiceAreaServicesTemplate;
   };
   globalsSelect: {
     'site-globals': SiteGlobalsSelect<false> | SiteGlobalsSelect<true>;
+    'service-areas-template': ServiceAreasTemplateSelect<false> | ServiceAreasTemplateSelect<true>;
+    'services-template': ServicesTemplateSelect<false> | ServicesTemplateSelect<true>;
+    'service-area-services-template': ServiceAreaServicesTemplateSelect<false> | ServiceAreaServicesTemplateSelect<true>;
   };
   locale: 'en';
   widgets: {
@@ -240,6 +259,18 @@ export interface Section {
             }[]
           | null;
         allServicesLabel?: string | null;
+        /**
+         * e.g. Service Areas. Empty: no service areas menu.
+         */
+        areasLabel?: string | null;
+        /**
+         * The service areas hub, e.g. /service-areas.
+         */
+        areasHref?: string | null;
+        /**
+         * e.g. All service areas (last link in the menu).
+         */
+        allAreasLabel?: string | null;
         brandLabel?: string | null;
         links?:
           | {
@@ -1133,6 +1164,18 @@ export interface Page {
             }[]
           | null;
         allServicesLabel?: string | null;
+        /**
+         * e.g. Service Areas. Empty: no service areas menu.
+         */
+        areasLabel?: string | null;
+        /**
+         * The service areas hub, e.g. /service-areas.
+         */
+        areasHref?: string | null;
+        /**
+         * e.g. All service areas (last link in the menu).
+         */
+        allAreasLabel?: string | null;
         brandLabel?: string | null;
         links?:
           | {
@@ -1999,6 +2042,2794 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-areas".
+ */
+export interface ServiceArea {
+  id: string;
+  title: string;
+  place?: {
+    kind?: ('city' | 'place' | 'county') | null;
+    name?: string | null;
+    label?: string | null;
+    state?: string | null;
+    stateFips?: string | null;
+    county?: string | null;
+    countyGeoid?: string | null;
+    geoid?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  /**
+   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
+   */
+  slug?: string | null;
+  meta?: {
+    /**
+     * Shown in search results and the browser tab. Empty: the title.
+     */
+    title?: string | null;
+    /**
+     * Shown under the title in search results, about 150 characters.
+     */
+    description?: string | null;
+  };
+  /**
+   * Each one gets its own Service in Area page (created as a draft, not indexed).
+   */
+  offered?: (string | Service)[] | null;
+  serviceAreaServicesByParent?: {
+    docs?: (string | ServiceAreaService)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Starts as a copy of this type’s globals design. {field} placeholders are filled from this entry.
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: string;
+  title: string;
+  /**
+   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
+   */
+  slug?: string | null;
+  meta?: {
+    /**
+     * Shown in search results and the browser tab. Empty: the title.
+     */
+    title?: string | null;
+    /**
+     * Shown under the title in search results, about 150 characters.
+     */
+    description?: string | null;
+  };
+  serviceAreaServicesByChild?: {
+    docs?: (string | ServiceAreaService)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Starts as a copy of this type’s globals design. {field} placeholders are filled from this entry.
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-area-services".
+ */
+export interface ServiceAreaService {
+  id: string;
+  title: string;
+  parent: string | ServiceArea;
+  child: string | Service;
+  meta?: {
+    /**
+     * Shown in search results and the browser tab. Empty: the title.
+     */
+    title?: string | null;
+    /**
+     * Shown under the title in search results, about 150 characters.
+     */
+    description?: string | null;
+  };
+  /**
+   * Let search engines index this page. Needs 150+ words written for this page and local proof beyond the starting design. Off: "noindex, follow" and left out of the sitemap.
+   */
+  index?: boolean | null;
+  /**
+   * Starts as a copy of Service in Area Globals. Placeholders: {area.title}, {service.title}, …
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2031,6 +4862,100 @@ export interface PayloadMcpApiKey {
      * Allow clients to update pages.
      */
     update?: boolean | null;
+    /**
+     * Allow clients to delete pages.
+     */
+    delete?: boolean | null;
+  };
+  sections?: {
+    /**
+     * Allow clients to find sections.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create sections.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update sections.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete sections.
+     */
+    delete?: boolean | null;
+  };
+  media?: {
+    /**
+     * Allow clients to find media.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create media.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update media.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete media.
+     */
+    delete?: boolean | null;
+  };
+  services?: {
+    /**
+     * Allow clients to find services.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create services.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update services.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete services.
+     */
+    delete?: boolean | null;
+  };
+  serviceAreas?: {
+    /**
+     * Allow clients to find service-areas.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create service-areas.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update service-areas.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete service-areas.
+     */
+    delete?: boolean | null;
+  };
+  serviceAreaServices?: {
+    /**
+     * Allow clients to find service-area-services.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create service-area-services.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update service-area-services.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete service-area-services.
+     */
+    delete?: boolean | null;
   };
   siteGlobals?: {
     /**
@@ -2039,6 +4964,36 @@ export interface PayloadMcpApiKey {
     find?: boolean | null;
     /**
      * Allow clients to update site-globals global.
+     */
+    update?: boolean | null;
+  };
+  servicesTemplate?: {
+    /**
+     * Allow clients to find services-template global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update services-template global.
+     */
+    update?: boolean | null;
+  };
+  serviceAreasTemplate?: {
+    /**
+     * Allow clients to find service-areas-template global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update service-areas-template global.
+     */
+    update?: boolean | null;
+  };
+  serviceAreaServicesTemplate?: {
+    /**
+     * Allow clients to find service-area-services-template global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update service-area-services-template global.
      */
     update?: boolean | null;
   };
@@ -2088,6 +5043,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'service-areas';
+        value: string | ServiceArea;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: string | Service;
+      } | null)
+    | ({
+        relationTo: 'service-area-services';
+        value: string | ServiceAreaService;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -2235,6 +5202,9 @@ export interface SectionsSelect<T extends boolean = true> {
                     id?: T;
                   };
               allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
               brandLabel?: T;
               links?:
                 | T
@@ -3134,6 +6104,9 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
               brandLabel?: T;
               links?:
                 | T
@@ -4003,6 +6976,2749 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-areas_select".
+ */
+export interface ServiceAreasSelect<T extends boolean = true> {
+  title?: T;
+  place?:
+    | T
+    | {
+        kind?: T;
+        name?: T;
+        label?: T;
+        state?: T;
+        stateFips?: T;
+        county?: T;
+        countyGeoid?: T;
+        geoid?: T;
+        latitude?: T;
+        longitude?: T;
+      };
+  slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  offered?: T;
+  serviceAreaServicesByParent?: T;
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  serviceAreaServicesByChild?: T;
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-area-services_select".
+ */
+export interface ServiceAreaServicesSelect<T extends boolean = true> {
+  title?: T;
+  parent?: T;
+  child?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  index?: T;
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys_select".
  */
 export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
@@ -4015,8 +9731,67 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
+        delete?: T;
+      };
+  sections?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  media?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  services?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  serviceAreas?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  serviceAreaServices?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
       };
   siteGlobals?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  servicesTemplate?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  serviceAreasTemplate?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  serviceAreaServicesTemplate?:
     | T
     | {
         find?: T;
@@ -4101,6 +9876,2745 @@ export interface SiteGlobal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-areas-template".
+ */
+export interface ServiceAreasTemplate {
+  id: string;
+  /**
+   * URL prefix for every Service Area, e.g. "service-areas" → /service-areas/<slug>. Leave empty to use /<slug>.
+   */
+  pathPrefix?: string | null;
+  /**
+   * The design every new Service Area starts from. Use {field} placeholders, e.g. {title}.
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  /**
+   * Heading of the list of published Service Areas added to the page at the URL prefix (the hub, e.g. /service-areas). Empty: no list.
+   */
+  hubLinksHeading?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-template".
+ */
+export interface ServicesTemplate {
+  id: string;
+  /**
+   * URL prefix for every Service, e.g. "services" → /services/<slug>. Leave empty to use /<slug>.
+   */
+  pathPrefix?: string | null;
+  /**
+   * The design every new Service starts from. Use {field} placeholders, e.g. {title}.
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  /**
+   * Heading of the list of published Services added to the page at the URL prefix (the hub, e.g. /services). Empty: no list.
+   */
+  hubLinksHeading?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-area-services-template".
+ */
+export interface ServiceAreaServicesTemplate {
+  id: string;
+  /**
+   * The design every new Service in Area starts from.
+   */
+  sections?:
+    | (
+        | {
+            logo: string | Media;
+            searchPlaceholder: string;
+            searchAction: string;
+            servicesLabel: string;
+            servicesHref: string;
+            callLabel: string;
+            callHref: string;
+            primaryLabel: string;
+            primaryHref: string;
+            howItWorksLabel: string;
+            howItWorksHref: string;
+            faqsLabel: string;
+            faqsHref: string;
+            contactLabel: string;
+            contactHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            serviceLinks?:
+              | {
+                  label: string;
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            allServicesLabel?: string | null;
+            /**
+             * e.g. Service Areas. Empty: no service areas menu.
+             */
+            areasLabel?: string | null;
+            /**
+             * The service areas hub, e.g. /service-areas.
+             */
+            areasHref?: string | null;
+            /**
+             * e.g. All service areas (last link in the menu).
+             */
+            allAreasLabel?: string | null;
+            brandLabel?: string | null;
+            links?:
+              | {
+                  label?: string | null;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'navbar';
+          }
+        | {
+            text: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'announcementBar';
+          }
+        | {
+            backgroundImage: string | Media;
+            headlineLine1: string;
+            headlineLine2: string;
+            reviewEyebrow: string;
+            reviewHeading: string;
+            reviewerName: string;
+            reviewText: string;
+            reviewButtonLabel: string;
+            reviewButtonHref: string;
+            poweredByLabel: string;
+            searchPlaceholder: string;
+            searchAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading: string;
+            pills: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            bullets: {
+              label: string;
+              id?: string | null;
+            }[];
+            learnMoreLabel: string;
+            learnMoreHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesOverview';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            junkRemovalLabel: string;
+            cleanoutsLabel: string;
+            lightDemolitionsLabel: string;
+            locationLine1: string;
+            locationLine2: string;
+            callLabel: string;
+            callHref: string;
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceHighlightsStrip';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            missionParagraph1: string;
+            missionParagraph2: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourMission';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              description: string;
+              id?: string | null;
+            }[];
+            bookUsNowLabel: string;
+            bookUsNowHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider1';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            residentialLabel: string;
+            commercialLabel: string;
+            lightDemolitionLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourServicesTriptych';
+          }
+        | {
+            heading: string;
+            watermarkLogo: string | Media;
+            items: {
+              beforeImage: string | Media;
+              afterImage: string | Media;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourResults';
+          }
+        | {
+            heading: string;
+            towns: {
+              label: string;
+              column: 'main' | 'map';
+              id?: string | null;
+            }[];
+            mapEmbedUrl: string;
+            mapLinkHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'areasWeServe';
+          }
+        | {
+            heading: string;
+            items: {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqAccordion';
+          }
+        | {
+            taglineLine1: string;
+            taglineLine2: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'brandDivider2';
+          }
+        | {
+            heading: string;
+            introLine1: string;
+            introLine2: string;
+            introNote: string;
+            stepsHeading: string;
+            stepsIcon: string | Media;
+            hoursHeading: string;
+            hours: {
+              day: string;
+              hours: string;
+              id?: string | null;
+            }[];
+            tellUsMoreLabel: string;
+            searchPlaceholder: string;
+            categories: {
+              label: string;
+              id?: string | null;
+            }[];
+            nextMonthLabel: string;
+            nextMonthHref: string;
+            /**
+             * Exactly 7 rows in this fixed order: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.
+             */
+            weeklyTemplate: {
+              dayLabel: string;
+              closed: boolean;
+              closedLabel: string;
+              slots?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            detailsLabel: string;
+            detailsPlaceholder: string;
+            uploadLabel: string;
+            submitLabel: string;
+            formAction: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactUs';
+          }
+        | {
+            servicesLabel: string;
+            servicesHref: string;
+            privacyLabel: string;
+            privacyHref: string;
+            termsLabel: string;
+            termsHref: string;
+            facebookHref: string;
+            instagramHref: string;
+            logo: string | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'footer';
+          }
+        | {
+            backgroundImage: string | Media;
+            heading: string;
+            subheading?: string | null;
+            headingSize: 'title' | 'display';
+            textAlign: 'left' | 'center';
+            /**
+             * Translucent tint over the photo (mix-blend-mode: multiply, 70% opacity). "None" matches the divider instance; brand green matches the page-header instance.
+             */
+            overlayColor: 'none' | '#35ba57' | '#000000';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHeadingBand';
+          }
+        | {
+            headline: string;
+            paragraph: string;
+            buttonLabel: string;
+            buttonHref: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whatDoYouNeed';
+          }
+        | {
+            residentialLabel: string;
+            sameDayLabel: string;
+            noHeavyLiftingLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'highlightBar';
+          }
+        | {
+            items: {
+              label: string;
+              description: string;
+              buttonLabel: string;
+              buttonHref: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesSelector';
+          }
+        | {
+            label: string;
+            items: {
+              label: string;
+              href?: string | null;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'breadcrumb';
+          }
+        | {
+            lead: string;
+            body: string;
+            ctas: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            byline: string;
+            facts: {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceAnswer';
+          }
+        | {
+            heading: string;
+            takeHeading: string;
+            takeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeHeading: string;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
+            cantTakeNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeCantTake';
+          }
+        | {
+            heading: string;
+            intro: string;
+            loadSizeLabel: string;
+            typicalJobLabel: string;
+            priceLabel: string;
+            rows: {
+              loadSize: string;
+              typicalJob: string;
+              price: string;
+              id?: string | null;
+            }[];
+            includesHeading: string;
+            includes: {
+              label: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pricingTable';
+          }
+        | {
+            heading: string;
+            options: {
+              title: string;
+              featured?: boolean | null;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              cta?: {
+                label?: string | null;
+                href?: string | null;
+              };
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'optionsComparison';
+          }
+        | {
+            heading: string;
+            steps: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prepChecklist';
+          }
+        | {
+            heading: string;
+            intro: string;
+            itemLabel: string;
+            areas: {
+              name: string;
+              id?: string | null;
+            }[];
+            rows: {
+              item: string;
+              cells: {
+                value: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            sources?:
+              | {
+                  label: string;
+                  href?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'disposalGuide';
+          }
+        | {
+            heading: string;
+            intro: string;
+            sites: {
+              name: string;
+              facts: {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[];
+              sources?:
+                | {
+                    label: string;
+                    href?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            sourcesLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'dropOffSites';
+          }
+        | {
+            heading: string;
+            cards: {
+              title: string;
+              body: string;
+              link: {
+                label: string;
+                href: string;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whenPeopleCall';
+          }
+        | {
+            heading: string;
+            rating?: number | null;
+            reviewCount?: number | null;
+            countLabel: string;
+            starsLabel: string;
+            reviews: {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[];
+            reviewLinkLabel?: string | null;
+            /**
+             * Direct Google review form link (from Google Business Profile > Ask for reviews).
+             */
+            reviewLinkHref?: string | null;
+            cta: {
+              label: string;
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            heading: string;
+            body: string;
+            bodyLink: {
+              label: string;
+              href: string;
+            };
+            otherServicesHeading: string;
+            services: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceArea';
+          }
+        | {
+            heading: string;
+            lastUpdatedLabel: string;
+            lastUpdated: string;
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            showJumpList?: boolean | null;
+            jumpListLabel?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'legalText';
+          }
+        | {
+            heading: string;
+            inputLabel: string;
+            inputPlaceholder?: string | null;
+            submitLabel: string;
+            resultsCountOne: string;
+            resultsCountMany: string;
+            noResultsCount: string;
+            noResultsText: string;
+            noResultsLinks: {
+              label: string;
+              href: string;
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[];
+            callPrefix?: string | null;
+            phoneDisplay?: string | null;
+            pathLabel: string;
+            homeCrumbLabel: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'searchResults';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            services: {
+              name: string;
+              description: string;
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            footerText?: string | null;
+            buttons?:
+              | {
+                  label: string;
+                  href: string;
+                  style: 'primary' | 'secondary';
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'serviceDirectory';
+          }
+        | {
+            /**
+             * First headline line, white. Example: Junk removal in
+             */
+            heading: string;
+            /**
+             * Second headline line, brand green. Example: Frederick, MD
+             */
+            highlight: string;
+            line?: string | null;
+            backgroundImage: string | Media;
+            primaryLabel: string;
+            primaryHref: string;
+            secondaryLabel?: string | null;
+            secondaryHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoHero';
+          }
+        | {
+            /**
+             * Example: 10% off your first job in Frederick
+             */
+            offer: string;
+            /**
+             * Example: Same-day availability Mon–Fri
+             */
+            detail?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'green' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'offerBar';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiles: {
+              /**
+               * Example: Mattresses & box springs
+               */
+              label: string;
+              /**
+               * Example: See price & booking
+               */
+              linkLabel: string;
+              href: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkTiles';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * Place to show on the Google Map, e.g. Frederick, MD. Google draws the city outline.
+             */
+            mapQuery: string;
+            mapZoom?: number | null;
+            neighborhoodsLabel: string;
+            neighborhoods: {
+              name: string;
+              id?: string | null;
+            }[];
+            zipCodesLabel?: string | null;
+            zipCodes?:
+              | {
+                  code: string;
+                  id?: string | null;
+                }[]
+              | null;
+            nearbyLabel?: string | null;
+            nearbyText?: string | null;
+            /**
+             * Text before the phone link, e.g. Not sure we cover your street? Call
+             */
+            callText?: string | null;
+            phoneLabel?: string | null;
+            phoneHref?: string | null;
+            sourceNote?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'coverageMap';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            tiers: {
+              /**
+               * e.g. 1/2 truck
+               */
+              name: string;
+              /**
+               * How full the truck gauge shows, in percent.
+               */
+              fill: number;
+              /**
+               * e.g. $349 or From $199
+               */
+              price: string;
+              /**
+               * Typical job, e.g. a one-car garage
+               */
+              example?: string | null;
+              id?: string | null;
+            }[];
+            includes?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'loadPricing';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            /**
+             * e.g. City of Frederick bulk pickup
+             */
+            firstColumnLabel: string;
+            /**
+             * Highlighted column, e.g. Wright Way
+             */
+            secondColumnLabel: string;
+            rows: {
+              label: string;
+              first: string;
+              second: string;
+              id?: string | null;
+            }[];
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            beforeLabel: string;
+            afterLabel: string;
+            items: {
+              before: string | Media;
+              after: string | Media;
+              /**
+               * e.g. Clover Hill, Frederick
+               */
+              location: string;
+              /**
+               * Job facts, e.g. Removed / Time / Donated.
+               */
+              facts?:
+                | {
+                    label: string;
+                    value: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            heading: string;
+            links: {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[];
+            layout: 'grid' | 'inline';
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black' | 'green';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'linkList';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            destinations: {
+              /**
+               * e.g. Donate, Recycle, Dispose
+               */
+              kind: string;
+              name: string;
+              address?: string | null;
+              note?: string | null;
+              id?: string | null;
+            }[];
+            rulesHeading?: string | null;
+            rules?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Where the facts come from and when they were checked.
+             */
+            sourceNote?: string | null;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'wasteDestinations';
+          }
+        | {
+            heading: string;
+            intro?: string | null;
+            events: {
+              /**
+               * e.g. Spring & fall, or April 12
+               */
+              when: string;
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey' | 'black';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'eventCalendar';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            audiences: {
+              title: string;
+              body: string;
+              id?: string | null;
+            }[];
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'audienceGrid';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            steps: {
+              label: string;
+              id?: string | null;
+            }[];
+            ctaLabel: string;
+            /**
+             * Usually #contact-us (the booking form with photo upload) or /book-now
+             */
+            ctaHref: string;
+            /**
+             * Section background.
+             */
+            tone: 'white' | 'grey';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'photoQuote';
+          }
+      )[]
+    | null;
+  /**
+   * Heading of the list on each Service Area page linking to its Services in Areas. Placeholders allowed. Empty: no list.
+   */
+  parentLinksHeading?: string | null;
+  /**
+   * Heading of the list on each offered page linking to its Services in Areas. Placeholders allowed. Empty: no list.
+   */
+  childLinksHeading?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-globals_select".
  */
 export interface SiteGlobalsSelect<T extends boolean = true> {
@@ -4118,6 +12632,2715 @@ export interface SiteGlobalsSelect<T extends boolean = true> {
         component?: T;
         id?: T;
       };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-areas-template_select".
+ */
+export interface ServiceAreasTemplateSelect<T extends boolean = true> {
+  pathPrefix?: T;
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  hubLinksHeading?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services-template_select".
+ */
+export interface ServicesTemplateSelect<T extends boolean = true> {
+  pathPrefix?: T;
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  hubLinksHeading?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-area-services-template_select".
+ */
+export interface ServiceAreaServicesTemplateSelect<T extends boolean = true> {
+  sections?:
+    | T
+    | {
+        navbar?:
+          | T
+          | {
+              logo?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              servicesLabel?: T;
+              servicesHref?: T;
+              callLabel?: T;
+              callHref?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              howItWorksLabel?: T;
+              howItWorksHref?: T;
+              faqsLabel?: T;
+              faqsHref?: T;
+              contactLabel?: T;
+              contactHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              serviceLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              allServicesLabel?: T;
+              areasLabel?: T;
+              areasHref?: T;
+              allAreasLabel?: T;
+              brandLabel?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        announcementBar?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              backgroundImage?: T;
+              headlineLine1?: T;
+              headlineLine2?: T;
+              reviewEyebrow?: T;
+              reviewHeading?: T;
+              reviewerName?: T;
+              reviewText?: T;
+              reviewButtonLabel?: T;
+              reviewButtonHref?: T;
+              poweredByLabel?: T;
+              searchPlaceholder?: T;
+              searchAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesOverview?:
+          | T
+          | {
+              heading?: T;
+              pills?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              bullets?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              learnMoreLabel?: T;
+              learnMoreHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceHighlightsStrip?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              junkRemovalLabel?: T;
+              cleanoutsLabel?: T;
+              lightDemolitionsLabel?: T;
+              locationLine1?: T;
+              locationLine2?: T;
+              callLabel?: T;
+              callHref?: T;
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourMission?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              missionParagraph1?: T;
+              missionParagraph2?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              bookUsNowLabel?: T;
+              bookUsNowHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider1?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourServicesTriptych?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              residentialLabel?: T;
+              commercialLabel?: T;
+              lightDemolitionLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourResults?:
+          | T
+          | {
+              heading?: T;
+              watermarkLogo?: T;
+              items?:
+                | T
+                | {
+                    beforeImage?: T;
+                    afterImage?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        areasWeServe?:
+          | T
+          | {
+              heading?: T;
+              towns?:
+                | T
+                | {
+                    label?: T;
+                    column?: T;
+                    id?: T;
+                  };
+              mapEmbedUrl?: T;
+              mapLinkHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqAccordion?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        brandDivider2?:
+          | T
+          | {
+              taglineLine1?: T;
+              taglineLine2?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactUs?:
+          | T
+          | {
+              heading?: T;
+              introLine1?: T;
+              introLine2?: T;
+              introNote?: T;
+              stepsHeading?: T;
+              stepsIcon?: T;
+              hoursHeading?: T;
+              hours?:
+                | T
+                | {
+                    day?: T;
+                    hours?: T;
+                    id?: T;
+                  };
+              tellUsMoreLabel?: T;
+              searchPlaceholder?: T;
+              categories?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              nextMonthLabel?: T;
+              nextMonthHref?: T;
+              weeklyTemplate?:
+                | T
+                | {
+                    dayLabel?: T;
+                    closed?: T;
+                    closedLabel?: T;
+                    slots?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              detailsLabel?: T;
+              detailsPlaceholder?: T;
+              uploadLabel?: T;
+              submitLabel?: T;
+              formAction?: T;
+              id?: T;
+              blockName?: T;
+            };
+        footer?:
+          | T
+          | {
+              servicesLabel?: T;
+              servicesHref?: T;
+              privacyLabel?: T;
+              privacyHref?: T;
+              termsLabel?: T;
+              termsHref?: T;
+              facebookHref?: T;
+              instagramHref?: T;
+              logo?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoHeadingBand?:
+          | T
+          | {
+              backgroundImage?: T;
+              heading?: T;
+              subheading?: T;
+              headingSize?: T;
+              textAlign?: T;
+              overlayColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whatDoYouNeed?:
+          | T
+          | {
+              headline?: T;
+              paragraph?: T;
+              buttonLabel?: T;
+              buttonHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        highlightBar?:
+          | T
+          | {
+              residentialLabel?: T;
+              sameDayLabel?: T;
+              noHeavyLiftingLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesSelector?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    description?: T;
+                    buttonLabel?: T;
+                    buttonHref?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        breadcrumb?:
+          | T
+          | {
+              label?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceAnswer?:
+          | T
+          | {
+              lead?: T;
+              body?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              byline?: T;
+              facts?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        takeCantTake?:
+          | T
+          | {
+              heading?: T;
+              takeHeading?: T;
+              takeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeHeading?: T;
+              cantTakeItems?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              cantTakeNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              loadSizeLabel?: T;
+              typicalJobLabel?: T;
+              priceLabel?: T;
+              rows?:
+                | T
+                | {
+                    loadSize?: T;
+                    typicalJob?: T;
+                    price?: T;
+                    id?: T;
+                  };
+              includesHeading?: T;
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        optionsComparison?:
+          | T
+          | {
+              heading?: T;
+              options?:
+                | T
+                | {
+                    title?: T;
+                    featured?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    cta?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prepChecklist?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        disposalGuide?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              itemLabel?: T;
+              areas?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    item?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              sources?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        dropOffSites?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              sites?:
+                | T
+                | {
+                    name?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    sources?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              sourcesLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whenPeopleCall?:
+          | T
+          | {
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        reviews?:
+          | T
+          | {
+              heading?: T;
+              rating?: T;
+              reviewCount?: T;
+              countLabel?: T;
+              starsLabel?: T;
+              reviews?:
+                | T
+                | {
+                    author?: T;
+                    rating?: T;
+                    text?: T;
+                    dateLabel?: T;
+                    location?: T;
+                    service?: T;
+                    photo?: T;
+                    ownerReply?: T;
+                    id?: T;
+                  };
+              reviewLinkLabel?: T;
+              reviewLinkHref?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        serviceArea?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              bodyLink?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                  };
+              otherServicesHeading?: T;
+              services?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        legalText?:
+          | T
+          | {
+              heading?: T;
+              lastUpdatedLabel?: T;
+              lastUpdated?: T;
+              body?: T;
+              showJumpList?: T;
+              jumpListLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        searchResults?:
+          | T
+          | {
+              heading?: T;
+              inputLabel?: T;
+              inputPlaceholder?: T;
+              submitLabel?: T;
+              resultsCountOne?: T;
+              resultsCountMany?: T;
+              noResultsCount?: T;
+              noResultsText?: T;
+              noResultsLinks?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              callPrefix?: T;
+              phoneDisplay?: T;
+              pathLabel?: T;
+              homeCrumbLabel?: T;
+              id?: T;
+              blockName?: T;
+            };
+        serviceDirectory?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              services?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              footerText?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        photoHero?:
+          | T
+          | {
+              heading?: T;
+              highlight?: T;
+              line?: T;
+              backgroundImage?: T;
+              primaryLabel?: T;
+              primaryHref?: T;
+              secondaryLabel?: T;
+              secondaryHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        offerBar?:
+          | T
+          | {
+              offer?: T;
+              detail?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkTiles?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiles?:
+                | T
+                | {
+                    label?: T;
+                    linkLabel?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        coverageMap?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mapQuery?: T;
+              mapZoom?: T;
+              neighborhoodsLabel?: T;
+              neighborhoods?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              zipCodesLabel?: T;
+              zipCodes?:
+                | T
+                | {
+                    code?: T;
+                    id?: T;
+                  };
+              nearbyLabel?: T;
+              nearbyText?: T;
+              callText?: T;
+              phoneLabel?: T;
+              phoneHref?: T;
+              sourceNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        loadPricing?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              tiers?:
+                | T
+                | {
+                    name?: T;
+                    fill?: T;
+                    price?: T;
+                    example?: T;
+                    id?: T;
+                  };
+              includes?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              firstColumnLabel?: T;
+              secondColumnLabel?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    first?: T;
+                    second?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              beforeLabel?: T;
+              afterLabel?: T;
+              items?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    location?: T;
+                    facts?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        linkList?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        wasteDestinations?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              destinations?:
+                | T
+                | {
+                    kind?: T;
+                    name?: T;
+                    address?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              rulesHeading?: T;
+              rules?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              sourceNote?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        eventCalendar?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              events?:
+                | T
+                | {
+                    when?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        audienceGrid?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              audiences?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+        photoQuote?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              steps?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              ctaHref?: T;
+              tone?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  parentLinksHeading?: T;
+  childLinksHeading?: T;
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
