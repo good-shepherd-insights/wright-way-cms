@@ -3,6 +3,9 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { parseCookies } from 'payload/shared'
+import { servicesPlugin } from '@good-shepherd-insights/payload-plugin-services'
+import { sharedBlocks } from '@good-shepherd-insights/website-components/payload'
+import { inlinePreviewAdmin } from './admin/livePreviewConfig'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { fileURLToPath } from 'url'
@@ -28,6 +31,15 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 const siteBaseURL = `${siteOrigin}/`
+
+// Repeatable page types (payload-plugin-services). URLs and designs are set
+// by the owner in each type's template in the CMS.
+const SERVICE_AREAS = 'service-areas'
+const SERVICES = 'services'
+// A service in a service area, e.g. /service-areas/frederick/junk-removal.
+const SERVICES_IN_AREAS = 'service-area-services'
+const serviceTypes = [SERVICE_AREAS, SERVICES]
+const serviceGlobals = [...serviceTypes, SERVICES_IN_AREAS].map((type) => `${type}-template`)
 
 // Mirrors the website's route shape (Astro i18n, prefixDefaultLocale: false):
 // the default locale is unprefixed for every page (`/`, `/<slug>`), other
@@ -76,17 +88,27 @@ export default buildConfig({
       afterLogin: ['/admin/PasskeyLogin#default'],
     },
     livePreview: {
-      url: ({ collectionConfig, data, locale, req }) => {
+      url: ({ collectionConfig, data, globalConfig, locale, req }) => {
         // Every preview goes through the site's on-request /preview route,
         // which reads the latest drafts with the editor's own login token (the
         // CMS cookie never reaches the CMS from the site's domain). This runs
         // on the CMS server during the editor's own admin request, so the
-        // cookie is first-party here. A page previews itself; the site global
-        // and global components preview on the home page.
+        // cookie is first-party here. Pages and service entries preview
+        // themselves; the site global and global components preview on home.
         const token = parseCookies(req.headers).get(`${req.payload.config.cookiePrefix}-token`)
-        const slug = collectionConfig?.slug === Pages.slug ? data.slug : 'home'
+        // A service type's globals preview their own design.
+        if (token && globalConfig && serviceGlobals.includes(globalConfig.slug)) {
+          return `${siteOrigin}/preview?${new URLSearchParams({ global: globalConfig.slug, locale: locale.code, token })}`
+        }
+        // A service in an area has no slug of its own (its URL comes from both parents).
+        if (token && collectionConfig?.slug === SERVICES_IN_AREAS && data.id) {
+          return `${siteOrigin}/preview?${new URLSearchParams({ collection: SERVICES_IN_AREAS, id: String(data.id), locale: locale.code, token })}`
+        }
+        const isService = serviceTypes.includes(collectionConfig?.slug ?? '')
+        const collection = isService ? collectionConfig!.slug : 'pages'
+        const slug = collectionConfig?.slug === Pages.slug || isService ? data.slug : 'home'
         if (token && typeof slug === 'string' && slug) {
-          return `${siteOrigin}/preview?${new URLSearchParams({ slug, locale: locale.code, token })}`
+          return `${siteOrigin}/preview?${new URLSearchParams({ collection, slug, locale: locale.code, token })}`
         }
         if (collectionConfig?.slug === Pages.slug && typeof data.slug === 'string') {
           return getAstroPreviewURL(locale.code, data.slug)
@@ -94,8 +116,8 @@ export default buildConfig({
 
         return siteOrigin
       },
-      globals: [siteGlobalSlug],
-      collections: [Pages.slug, Sections.slug],
+      globals: [siteGlobalSlug, ...serviceGlobals],
+      collections: [Pages.slug, Sections.slug, ...serviceTypes, SERVICES_IN_AREAS],
       breakpoints: [
         { name: 'mobile', label: 'Mobile', width: 400, height: 900 },
         { name: 'tablet', label: 'Tablet', width: 900, height: 1000 },
@@ -126,6 +148,40 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
+    servicesPlugin({
+      adminGroup: 'Services',
+      blocks: [...sharedBlocks],
+      combinations: [
+        {
+          slug: SERVICES_IN_AREAS,
+          parent: SERVICE_AREAS,
+          child: SERVICES,
+          labels: { singular: 'Service in Area', plural: 'Services in Areas' },
+          tokens: { parent: 'area', child: 'service' },
+          // Local proof besides a new photo: a review or before/after block of its own.
+          indexing: { minUniqueWords: 150, proofBlocks: ['reviews', 'beforeAfter'] },
+        },
+      ],
+      // Same live-preview bridge as Pages and Site Globals (token hand-off,
+      // inline editing, image picker).
+      overrides: {
+        collection: (collection) => ({ ...collection, admin: { ...collection.admin, ...inlinePreviewAdmin } }),
+        global: (global) => ({ ...global, admin: { ...global.admin, ...inlinePreviewAdmin } }),
+      },
+      pagesCollection: Pages.slug,
+      types: [
+        {
+          slug: SERVICE_AREAS,
+          labels: { singular: 'Service Area', plural: 'Service Areas' },
+          place: true,
+        },
+        {
+          slug: SERVICES,
+          labels: { singular: 'Service', plural: 'Services' },
+          titleLabel: 'Which service?',
+        },
+      ],
+    }),
     vercelBlobStorage({
       collections: {
         [Media.slug]: true,
@@ -133,25 +189,22 @@ export default buildConfig({
       token: blobReadWriteToken,
     }),
     mcpPlugin({
+      // Every content collection and global, all operations (Users excluded:
+      // MCP must not manage admin accounts). Each API key still needs its
+      // checkboxes ticked to use them.
       collections: {
-        [Pages.slug]: {
-          enabled: {
-            create: true,
-            find: true,
-            update: true,
-          },
-          description: 'Page content and reusable sections served by the website.',
-        },
+        [Pages.slug]: { enabled: true, description: 'Pages served by the website.' },
+        [Sections.slug]: { enabled: true, description: 'Global components (navbar, footer) curated onto every page.' },
+        [Media.slug]: { enabled: true, description: 'Uploaded images and files.' },
+        [SERVICES]: { enabled: true, description: 'Services, served at /<prefix>/<slug> (prefix set in Service Globals).' },
+        [SERVICE_AREAS]: { enabled: true, description: 'Service areas (real US places), served at /<prefix>/<slug> (prefix set in Service Area Globals).' },
+        [SERVICES_IN_AREAS]: { enabled: true, description: 'A service in a service area, served at <area path>/<service slug>; indexed only when it has content of its own.' },
       },
       globals: {
-        [siteGlobalSlug]: {
-          enabled: {
-            find: true,
-            update: true,
-          },
-          description:
-            'Shared site globals. Homepage and page content are managed through the Pages collection.',
-        },
+        [siteGlobalSlug]: { enabled: true, description: 'Shared site globals: brand and global components.' },
+        [`${SERVICES}-template`]: { enabled: true, description: 'Service Globals: URL prefix and the design new services start from.' },
+        [`${SERVICE_AREAS}-template`]: { enabled: true, description: 'Service Area Globals: URL prefix and the design new service areas start from.' },
+        [`${SERVICES_IN_AREAS}-template`]: { enabled: true, description: 'Service in Area Globals: the design new service-in-area pages start from, and the link-list headings.' },
       },
     }),
   ],
