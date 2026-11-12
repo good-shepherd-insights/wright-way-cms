@@ -7,6 +7,7 @@ import { sectionsSlug } from './Sections'
 
 import { deployOnPublish } from '../hooks/websiteDeploy'
 import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
+import { asMetaDescription, searchTitleField, seoPreviewFields } from './seo'
 
 const reservedSlugs = new Set(['admin', 'api', 'robots.txt'])
 
@@ -54,7 +55,13 @@ const metadata: Field = {
     name: 'titleTemplate', localized: true, type: 'text', required: true,
     defaultValue: '{title}',
     admin: { description: 'Use exactly one {title} placeholder for the localized page title.' },
-  }],
+  },
+  searchTitleField,
+  asMetaDescription({
+    name: 'description', localized: true, type: 'textarea', required: false,
+    label: 'Meta description',
+    admin: { description: 'Shown under the title in search results, about 150–160 characters. Empty: no description is published.' },
+  })],
 }
 if (metadata.type === 'group') {
   const titleTemplate = metadata.fields.find((field) => 'name' in field && field.name === 'titleTemplate')
@@ -157,7 +164,10 @@ export const Pages: CollectionConfig = {
         },
         {
           label: 'SEO',
-          fields: [metadata],
+          fields: [
+            metadata,
+            ...seoPreviewFields({ descriptionPath: 'metadata.description', kind: 'page', titlePath: 'metadata.searchTitle' }),
+          ],
         },
       ],
     },

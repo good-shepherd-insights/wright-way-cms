@@ -23,7 +23,12 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_98d046c83f406aa17db777d5d0692b90 } from '../../../admin/InlinePreviewBridge'
+import { SearchTitle as SearchTitle_1bfb51364f28ebf437d1f8f817e875a7 } from '../../../admin/SearchTitle'
+import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { JsonLdPreview as JsonLdPreview_6b854ad6159e66000be6a80f87965541 } from '../../../admin/JsonLdPreview'
 import { PlaceLookup as PlaceLookup_54bb394e5022b7c9e2b52b046fb57b01 } from '@good-shepherd-insights/payload-plugin-services/client'
+import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { default as default_ecb2d425e0c47f2704e0f6c0188b49d0 } from '../../../admin/Icon'
 import { default as default_8c3bf6d9c8d24e4e81ab6192a4938147 } from '../../../admin/Logo'
 import { default as default_dfe273060e164266996d5a47d67a4bd5 } from '../../../admin/PasskeyLogin'
@@ -58,7 +63,12 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/admin/InlinePreviewBridge#default": default_98d046c83f406aa17db777d5d0692b90,
+  "/admin/SearchTitle#SearchTitle": SearchTitle_1bfb51364f28ebf437d1f8f817e875a7,
+  "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "/admin/JsonLdPreview#JsonLdPreview": JsonLdPreview_6b854ad6159e66000be6a80f87965541,
   "@good-shepherd-insights/payload-plugin-services/client#PlaceLookup": PlaceLookup_54bb394e5022b7c9e2b52b046fb57b01,
+  "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "/admin/Icon#default": default_ecb2d425e0c47f2704e0f6c0188b49d0,
   "/admin/Logo#default": default_8c3bf6d9c8d24e4e81ab6192a4938147,
   "/admin/PasskeyLogin#default": default_dfe273060e164266996d5a47d67a4bd5,
