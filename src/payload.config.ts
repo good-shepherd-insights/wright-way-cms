@@ -6,6 +6,7 @@ import { parseCookies } from 'payload/shared'
 import { servicesPlugin } from '@good-shepherd-insights/payload-plugin-services'
 import { sharedBlocks } from '@good-shepherd-insights/website-components/payload'
 import { inlinePreviewAdmin } from './admin/livePreviewConfig'
+import { deployOnDelete, deployOnGlobalPublish, deployOnPublishChange } from './hooks/websiteDeploy'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { fileURLToPath } from 'url'
@@ -163,10 +164,24 @@ export default buildConfig({
         },
       ],
       // Same live-preview bridge as Pages and Site Globals (token hand-off,
-      // inline editing, image picker).
+      // inline editing, image picker), and the same website rebuild on
+      // publish — plus on unpublish and delete, since these pages also feed
+      // the navbar menus and hub link lists.
       overrides: {
-        collection: (collection) => ({ ...collection, admin: { ...collection.admin, ...inlinePreviewAdmin } }),
-        global: (global) => ({ ...global, admin: { ...global.admin, ...inlinePreviewAdmin } }),
+        collection: (collection) => ({
+          ...collection,
+          admin: { ...collection.admin, ...inlinePreviewAdmin },
+          hooks: {
+            ...collection.hooks,
+            afterChange: [...(collection.hooks?.afterChange ?? []), deployOnPublishChange],
+            afterDelete: [...(collection.hooks?.afterDelete ?? []), deployOnDelete],
+          },
+        }),
+        global: (global) => ({
+          ...global,
+          admin: { ...global.admin, ...inlinePreviewAdmin },
+          hooks: { ...global.hooks, afterChange: [...(global.hooks?.afterChange ?? []), deployOnGlobalPublish] },
+        }),
       },
       pagesCollection: Pages.slug,
       types: [
