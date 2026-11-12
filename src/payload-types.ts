@@ -563,15 +563,10 @@ export interface Section {
           id?: string | null;
         }[];
         cantTakeHeading: string;
-        /**
-         * Leave empty to hide the "can't take" card.
-         */
-        cantTakeItems?:
-          | {
-              label: string;
-              id?: string | null;
-            }[]
-          | null;
+        cantTakeItems: {
+          label: string;
+          id?: string | null;
+        }[];
         cantTakeNote: string;
         id?: string | null;
         blockName?: string | null;
@@ -1473,15 +1468,10 @@ export interface Page {
           id?: string | null;
         }[];
         cantTakeHeading: string;
-        /**
-         * Leave empty to hide the "can't take" card.
-         */
-        cantTakeItems?:
-          | {
-              label: string;
-              id?: string | null;
-            }[]
-          | null;
+        cantTakeItems: {
+          label: string;
+          id?: string | null;
+        }[];
         cantTakeNote: string;
         id?: string | null;
         blockName?: string | null;
@@ -2418,15 +2408,10 @@ export interface ServiceArea {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
@@ -3348,15 +3333,10 @@ export interface Service {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
@@ -3939,7 +3919,7 @@ export interface ServiceAreaService {
   id: string;
   title: string;
   /**
-   * Starts as a copy of Service in Area Globals. Placeholders: {area.title}, {service.title}, …
+   * Starts as a copy of Services in Areas. Placeholders: {area.title}, {service.title}, …
    */
   sections?:
     | (
@@ -4273,15 +4253,10 @@ export interface ServiceAreaService {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
@@ -10323,15 +10298,10 @@ export interface ServiceAreasTemplate {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
@@ -11241,15 +11211,10 @@ export interface ServicesTemplate {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
@@ -12155,15 +12120,10 @@ export interface ServiceAreaServicesTemplate {
               id?: string | null;
             }[];
             cantTakeHeading: string;
-            /**
-             * Leave empty to hide the "can't take" card.
-             */
-            cantTakeItems?:
-              | {
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
+            cantTakeItems: {
+              label: string;
+              id?: string | null;
+            }[];
             cantTakeNote: string;
             id?: string | null;
             blockName?: string | null;
