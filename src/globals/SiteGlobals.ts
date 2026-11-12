@@ -111,10 +111,11 @@ const business: Field = {
 }
 
 export const SiteGlobals: GlobalConfig = {
-  slug, label: 'Site Globals', access: { read: authenticatedOrPublished },
+  slug, label: 'Pages', access: { read: authenticatedOrPublished },
   versions: { drafts: { autosave: { interval: 800 } } },
   admin: {
-    group: 'Pages',
+    // Sidebar: Globals → Pages, next to the services plugin's globals.
+    group: 'Globals',
     ...inlinePreviewAdmin,
   },
   fields: [{
