@@ -2036,6 +2036,10 @@ export interface Page {
      * Use exactly one {title} placeholder for the localized page title.
      */
     titleTemplate: string;
+    /**
+     * Shown under the title in search results, about 150–160 characters. Empty: no description is published.
+     */
+    description?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -2059,20 +2063,6 @@ export interface ServiceArea {
     geoid?: string | null;
     latitude?: number | null;
     longitude?: number | null;
-  };
-  /**
-   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
-   */
-  slug?: string | null;
-  meta?: {
-    /**
-     * Shown in search results and the browser tab. Empty: the title.
-     */
-    title?: string | null;
-    /**
-     * Shown under the title in search results, about 150 characters.
-     */
-    description?: string | null;
   };
   /**
    * Each one gets its own Service in Area page (created as a draft, not indexed).
@@ -2978,6 +2968,20 @@ export interface ServiceArea {
           }
       )[]
     | null;
+  meta?: {
+    /**
+     * Shown in search results and the browser tab. Empty: the title.
+     */
+    title?: string | null;
+    /**
+     * Shown under the title in search results, about 150 characters.
+     */
+    description?: string | null;
+  };
+  /**
+   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
+   */
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -2989,20 +2993,6 @@ export interface ServiceArea {
 export interface Service {
   id: string;
   title: string;
-  /**
-   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
-   */
-  slug?: string | null;
-  meta?: {
-    /**
-     * Shown in search results and the browser tab. Empty: the title.
-     */
-    title?: string | null;
-    /**
-     * Shown under the title in search results, about 150 characters.
-     */
-    description?: string | null;
-  };
   serviceAreaServicesByChild?: {
     docs?: (string | ServiceAreaService)[];
     hasNextPage?: boolean;
@@ -3903,19 +3893,6 @@ export interface Service {
           }
       )[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "service-area-services".
- */
-export interface ServiceAreaService {
-  id: string;
-  title: string;
-  parent: string | ServiceArea;
-  child: string | Service;
   meta?: {
     /**
      * Shown in search results and the browser tab. Empty: the title.
@@ -3927,9 +3904,20 @@ export interface ServiceAreaService {
     description?: string | null;
   };
   /**
-   * Let search engines index this page. Needs 150+ words written for this page and local proof beyond the starting design. Off: "noindex, follow" and left out of the sitemap.
+   * The last part of the URL. Filled from the title when left empty; the URL prefix is set in this type’s globals.
    */
-  index?: boolean | null;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-area-services".
+ */
+export interface ServiceAreaService {
+  id: string;
+  title: string;
   /**
    * Starts as a copy of Service in Area Globals. Placeholders: {area.title}, {service.title}, …
    */
@@ -4825,6 +4813,22 @@ export interface ServiceAreaService {
           }
       )[]
     | null;
+  meta?: {
+    /**
+     * Shown in search results and the browser tab. Empty: the title.
+     */
+    title?: string | null;
+    /**
+     * Shown under the title in search results, about 150 characters.
+     */
+    description?: string | null;
+  };
+  /**
+   * Let search engines index this page. Needs 150+ words written for this page and local proof beyond the starting design. Off: "noindex, follow" and left out of the sitemap.
+   */
+  index?: boolean | null;
+  parent: string | ServiceArea;
+  child: string | Service;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -6969,6 +6973,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         titleTemplate?: T;
+        description?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -6993,13 +6998,6 @@ export interface ServiceAreasSelect<T extends boolean = true> {
         geoid?: T;
         latitude?: T;
         longitude?: T;
-      };
-  slug?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
       };
   offered?: T;
   serviceAreaServicesByParent?: T;
@@ -7894,6 +7892,13 @@ export interface ServiceAreasSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -7904,13 +7909,6 @@ export interface ServiceAreasSelect<T extends boolean = true> {
  */
 export interface ServicesSelect<T extends boolean = true> {
   title?: T;
-  slug?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-      };
   serviceAreaServicesByChild?: T;
   sections?:
     | T
@@ -8803,6 +8801,13 @@ export interface ServicesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -8813,15 +8818,6 @@ export interface ServicesSelect<T extends boolean = true> {
  */
 export interface ServiceAreaServicesSelect<T extends boolean = true> {
   title?: T;
-  parent?: T;
-  child?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-      };
-  index?: T;
   sections?:
     | T
     | {
@@ -9713,6 +9709,15 @@ export interface ServiceAreaServicesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  index?: T;
+  parent?: T;
+  child?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -9870,6 +9875,80 @@ export interface SiteGlobal {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Facts about the business that Google and other search engines read. Leave anything you are unsure of empty; empty fields are not published.
+   */
+  business?: {
+    /**
+     * How search engines should file the business. Empty: listed as a company.
+     */
+    schemaType?: ('LocalBusiness' | 'HomeAndConstructionBusiness' | 'ProfessionalService' | 'Organization') | null;
+    /**
+     * A short, factual summary of what the business does and where.
+     */
+    description?: string | null;
+    /**
+     * The main phone number customers call, with area code. Example: +1-410-555-0123.
+     */
+    telephone?: string | null;
+    /**
+     * The email address customers can write to.
+     */
+    email?: string | null;
+    /**
+     * Where the business is based. A business that goes to its customers may leave the street empty.
+     */
+    address?: {
+      /**
+       * Optional. Leave empty if customers do not visit this address.
+       */
+      streetAddress?: string | null;
+      addressLocality?: string | null;
+      /**
+       * Two-letter state code, for example MD.
+       */
+      addressRegion?: string | null;
+      postalCode?: string | null;
+      /**
+       * Two-letter country code, for example US.
+       */
+      addressCountry?: string | null;
+    };
+    /**
+     * One row per set of days with the same hours.
+     */
+    hours?:
+      | {
+          days: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
+          /**
+           * 24-hour time, for example 08:00.
+           */
+          opens: string;
+          /**
+           * 24-hour time, for example 17:30.
+           */
+          closes: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Links to the business on other sites: Google Business Profile, Facebook, Yelp, Angi and similar.
+     */
+    sameAs?:
+      | {
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * How expensive the business is, from $ to $$$$. Example: $$.
+     */
+    priceRange?: string | null;
+    /**
+     * A photo of the business: the crew, a truck or the storefront.
+     */
+    image?: (string | null) | Media;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -12631,6 +12710,39 @@ export interface SiteGlobalsSelect<T extends boolean = true> {
     | {
         component?: T;
         id?: T;
+      };
+  business?:
+    | T
+    | {
+        schemaType?: T;
+        description?: T;
+        telephone?: T;
+        email?: T;
+        address?:
+          | T
+          | {
+              streetAddress?: T;
+              addressLocality?: T;
+              addressRegion?: T;
+              postalCode?: T;
+              addressCountry?: T;
+            };
+        hours?:
+          | T
+          | {
+              days?: T;
+              opens?: T;
+              closes?: T;
+              id?: T;
+            };
+        sameAs?:
+          | T
+          | {
+              url?: T;
+              id?: T;
+            };
+        priceRange?: T;
+        image?: T;
       };
   _status?: T;
   updatedAt?: T;

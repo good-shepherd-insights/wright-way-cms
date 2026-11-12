@@ -8,6 +8,7 @@ import { sharedBlocks } from '@good-shepherd-insights/website-components/payload
 import { inlinePreviewAdmin } from './admin/livePreviewConfig'
 import { deployOnDelete, deployOnGlobalPublish, deployOnPublishChange } from './hooks/websiteDeploy'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
@@ -17,6 +18,7 @@ import { Media } from './collections/Media'
 import { Sections } from './collections/Sections'
 import { SiteGlobals } from './globals/SiteGlobals'
 import { Pages } from './collections/Pages'
+import { pairFieldsIntoContentTab, searchResultURL, withSeoTab } from './collections/seo'
 import {
   blobReadWriteToken,
   cmsOrigin,
@@ -41,6 +43,7 @@ const SERVICES = 'services'
 const SERVICES_IN_AREAS = 'service-area-services'
 const serviceTypes = [SERVICE_AREAS, SERVICES]
 const serviceGlobals = [...serviceTypes, SERVICES_IN_AREAS].map((type) => `${type}-template`)
+const serviceCombinations = [{ slug: SERVICES_IN_AREAS, parent: SERVICE_AREAS, child: SERVICES }]
 
 // Mirrors the website's route shape (Astro i18n, prefixDefaultLocale: false):
 // the default locale is unprefixed for every page (`/`, `/<slug>`), other
@@ -167,9 +170,10 @@ export default buildConfig({
       // inline editing, image picker), and the same website rebuild on
       // publish — plus on unpublish and delete, since these pages also feed
       // the navbar menus and hub link lists.
+      // Their fields go in "Content" | "SEO" tabs (src/collections/seo.ts).
       overrides: {
         collection: (collection) => ({
-          ...collection,
+          ...withSeoTab(collection),
           admin: { ...collection.admin, ...inlinePreviewAdmin },
           hooks: {
             ...collection.hooks,
@@ -196,6 +200,15 @@ export default buildConfig({
           titleLabel: 'Which service?',
         },
       ],
+    }),
+    // The plugin adds pair fields to these after overrides.collection.
+    pairFieldsIntoContentTab(serviceTypes),
+    // Only its endpoints and translations: the SEO tabs above use its field
+    // components on the existing fields, so it adds no fields of its own.
+    seoPlugin({
+      collections: [],
+      globals: [],
+      generateURL: searchResultURL({ combinations: serviceCombinations, pagesSlug: Pages.slug, types: serviceTypes }),
     }),
     vercelBlobStorage({
       collections: {

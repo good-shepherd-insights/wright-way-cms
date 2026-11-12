@@ -17,10 +17,11 @@
   },
   "dependencies": {
     "@good-shepherd-insights/payload-plugin-services": "^0.1.0",
-    "@good-shepherd-insights/website-components": "npm:@good-shepherd-insights/wright-way-components@^0.1.5",
+    "@good-shepherd-insights/website-components": "npm:@good-shepherd-insights/wright-way-components@^0.1.7",
     "@payloadcms/db-mongodb": "3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/plugin-mcp": "^3.88.0",
+    "@payloadcms/plugin-seo": "3.88.0",
     "@payloadcms/richtext-lexical": "3.88.0",
     "@payloadcms/storage-vercel-blob": "3.88.0",
     "@payloadcms/ui": "3.88.0",
