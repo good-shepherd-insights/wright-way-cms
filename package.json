@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@good-shepherd-insights/payload-plugin-services": "^0.2.0",
-    "@good-shepherd-insights/website-components": "npm:@good-shepherd-insights/wright-way-components@^0.1.10",
+    "@good-shepherd-insights/website-components": "npm:@good-shepherd-insights/wright-way-components@^0.1.13",
     "@payloadcms/db-mongodb": "3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/plugin-mcp": "^3.88.0",

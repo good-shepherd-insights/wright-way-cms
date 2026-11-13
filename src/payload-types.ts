@@ -465,6 +465,18 @@ export interface Section {
         uploadLabel: string;
         submitLabel: string;
         formAction: string;
+        /**
+         * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+         */
+        emailSubject?: string | null;
+        /**
+         * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+         */
+        thankYouHref?: string | null;
+        /**
+         * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+         */
+        photosTooLargeMessage?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'contactUs';
@@ -1370,6 +1382,18 @@ export interface Page {
         uploadLabel: string;
         submitLabel: string;
         formAction: string;
+        /**
+         * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+         */
+        emailSubject?: string | null;
+        /**
+         * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+         */
+        thankYouHref?: string | null;
+        /**
+         * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+         */
+        photosTooLargeMessage?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'contactUs';
@@ -2310,6 +2334,18 @@ export interface ServiceArea {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -3235,6 +3271,18 @@ export interface Service {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -4155,6 +4203,18 @@ export interface ServiceAreaService {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -5431,6 +5491,9 @@ export interface SectionsSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -6333,6 +6396,9 @@ export interface PagesSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -7257,6 +7323,9 @@ export interface ServiceAreasSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -8166,6 +8235,9 @@ export interface ServicesSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -9074,6 +9146,9 @@ export interface ServiceAreaServicesSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -10200,6 +10275,18 @@ export interface ServiceAreasTemplate {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -11113,6 +11200,18 @@ export interface ServicesTemplate {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -12022,6 +12121,18 @@ export interface ServiceAreaServicesTemplate {
             uploadLabel: string;
             submitLabel: string;
             formAction: string;
+            /**
+             * Subject line of the email you get for each form submission. The page's title is added after it automatically, e.g. "New quote request · Mattress Removal in Frederick". Leave empty to use FormSubmit's default subject.
+             */
+            emailSubject?: string | null;
+            /**
+             * Page visitors are sent to after they submit the form, e.g. /thank-you or a full https:// link. Leave empty to use FormSubmit's own thank-you page.
+             */
+            thankYouHref?: string | null;
+            /**
+             * Message shown under the photo upload when the selected photos are too large to send together (10 MB total) and some were left out.
+             */
+            photosTooLargeMessage?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactUs';
@@ -13011,6 +13122,9 @@ export interface ServiceAreasTemplateSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -13914,6 +14028,9 @@ export interface ServicesTemplateSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
@@ -14816,6 +14933,9 @@ export interface ServiceAreaServicesTemplateSelect<T extends boolean = true> {
               uploadLabel?: T;
               submitLabel?: T;
               formAction?: T;
+              emailSubject?: T;
+              thankYouHref?: T;
+              photosTooLargeMessage?: T;
               id?: T;
               blockName?: T;
             };
