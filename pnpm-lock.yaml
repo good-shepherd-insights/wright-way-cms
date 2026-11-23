@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@good-shepherd-insights/payload-plugin-reviews':
+        specifier: ^0.1.0
+        version: 0.1.0(@payloadcms/ui@3.88.0(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react@19.2.6)
       '@good-shepherd-insights/payload-plugin-services':
         specifier: ^0.2.0
         version: 0.2.0(@payloadcms/ui@3.88.0(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react@19.2.6)
@@ -490,6 +493,15 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@good-shepherd-insights/payload-plugin-reviews@0.1.0':
+    resolution: {integrity: sha512-vzIG6gJCOMRqjKxSSA8Mab8ltzHCIdbt7VecQqRcFdpkcscph045kb8UnCwhuBvWw7pHlR6tqRU/Ij7p818sRg==, tarball: https://npm.pkg.github.com/download/@good-shepherd-insights/payload-plugin-reviews/0.1.0/961ecf0b9b2172f00ba52898aa262c28d567cf86}
+    engines: {node: '>=20.9.0', pnpm: ^9 || ^10 || ^11}
+    peerDependencies:
+      '@payloadcms/ui': ^3.88.0
+      next: '>=15.1.0'
+      payload: ^3.88.0
+      react: ^19.0.0
 
   '@good-shepherd-insights/payload-plugin-services@0.2.0':
     resolution: {integrity: sha512-n9SktuRZwasqF+pxosz5T/DLVQSiTzLU3Y0Ls+9XJGisae2SRWff6WMbal2J36IbR0oL67tF8PDrcESSzbx+xA==, tarball: https://npm.pkg.github.com/download/@good-shepherd-insights/payload-plugin-services/0.2.0/3e223be85798debf3ad292b28af9d2164b2c80ae}
@@ -4219,6 +4231,13 @@ snapshots:
       tabbable: 6.5.0
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@good-shepherd-insights/payload-plugin-reviews@0.1.0(@payloadcms/ui@3.88.0(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react@19.2.6)':
+    dependencies:
+      '@payloadcms/ui': 3.88.0(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3)
+      next: 16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4)
+      payload: 3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3)
+      react: 19.2.6
 
   '@good-shepherd-insights/payload-plugin-services@0.2.0(@payloadcms/ui@3.88.0(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.0(@babel/core@7.29.7)(@playwright/test@1.58.2)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.77.4))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(payload@3.88.0(bufferutil@4.1.0)(graphql@16.14.2)(typescript@5.7.3))(react@19.2.6)':
     dependencies:
