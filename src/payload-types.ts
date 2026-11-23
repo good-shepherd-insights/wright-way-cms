@@ -75,6 +75,7 @@ export interface Config {
     'service-areas': ServiceArea;
     services: Service;
     'service-area-services': ServiceAreaService;
+    reviews: Review;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -97,6 +98,7 @@ export interface Config {
     'service-areas': ServiceAreasSelect<false> | ServiceAreasSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     'service-area-services': ServiceAreaServicesSelect<false> | ServiceAreaServicesSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -112,12 +114,14 @@ export interface Config {
     'service-areas-template': ServiceAreasTemplate;
     'services-template': ServicesTemplate;
     'service-area-services-template': ServiceAreaServicesTemplate;
+    'reviews-sync': ReviewsSync;
   };
   globalsSelect: {
     'site-globals': SiteGlobalsSelect<false> | SiteGlobalsSelect<true>;
     'service-areas-template': ServiceAreasTemplateSelect<false> | ServiceAreasTemplateSelect<true>;
     'services-template': ServicesTemplateSelect<false> | ServicesTemplateSelect<true>;
     'service-area-services-template': ServiceAreaServicesTemplateSelect<false> | ServiceAreaServicesTemplateSelect<true>;
+    'reviews-sync': ReviewsSyncSelect<false> | ReviewsSyncSelect<true>;
   };
   locale: 'en';
   widgets: {
@@ -2089,7 +2093,7 @@ export interface ServiceArea {
     longitude?: number | null;
   };
   /**
-   * Each one gets its own Service in Area page (created as a draft, not indexed).
+   * Each one gets its own Local Page page (created as a draft, not indexed).
    */
   offered?: (string | Service)[] | null;
   serviceAreaServicesByParent?: {
@@ -3967,7 +3971,7 @@ export interface ServiceAreaService {
   id: string;
   title: string;
   /**
-   * Starts as a copy of Services in Areas. Placeholders: {area.title}, {service.title}, …
+   * Starts as a copy of Local Page Layout. Placeholders: {area.title}, {service.title}, …
    */
   sections?:
     | (
@@ -4894,6 +4898,61 @@ export interface ServiceAreaService {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  author: string;
+  kind: 'text' | 'video';
+  text?: string | null;
+  /**
+   * For video reviews: where it can be watched.
+   */
+  videoUrl?: string | null;
+  rating?: number | null;
+  date?: string | null;
+  /**
+   * Where the review was posted.
+   */
+  sourceUrl?: string | null;
+  platform?: string | null;
+  photos?: (string | Media)[] | null;
+  photoUrls?: string[] | null;
+  location?: string | null;
+  service?: string | null;
+  ownerReply?: string | null;
+  /**
+   * Only approved reviews are public.
+   */
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  featured?: boolean | null;
+  /**
+   * Higher numbers come first.
+   */
+  position?: number | null;
+  tags?: string[] | null;
+  source: 'manual' | 'synced';
+  synced?: {
+    testimonialId?: string | null;
+    projectId?: string | null;
+    approved?: boolean | null;
+    tags?: string[] | null;
+    hash?: string | null;
+    revision?: number | null;
+    sendingUntil?: string | null;
+    statusChanged?: boolean | null;
+    removed?: boolean | null;
+    pending?: boolean | null;
+    lastError?: string | null;
+  };
+  key: string;
+  mergedInto?: string | null;
+  notDuplicateOf?: string[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -5119,6 +5178,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'service-area-services';
         value: string | ServiceAreaService;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: string | Review;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -9799,6 +9862,50 @@ export interface ServiceAreaServicesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  author?: T;
+  kind?: T;
+  text?: T;
+  videoUrl?: T;
+  rating?: T;
+  date?: T;
+  sourceUrl?: T;
+  platform?: T;
+  photos?: T;
+  photoUrls?: T;
+  location?: T;
+  service?: T;
+  ownerReply?: T;
+  status?: T;
+  featured?: T;
+  position?: T;
+  tags?: T;
+  source?: T;
+  synced?:
+    | T
+    | {
+        testimonialId?: T;
+        projectId?: T;
+        approved?: T;
+        tags?: T;
+        hash?: T;
+        revision?: T;
+        sendingUntil?: T;
+        statusChanged?: T;
+        removed?: T;
+        pending?: T;
+        lastError?: T;
+      };
+  key?: T;
+  mergedInto?: T;
+  notDuplicateOf?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys_select".
  */
 export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
@@ -10035,11 +10142,11 @@ export interface SiteGlobal {
 export interface ServiceAreasTemplate {
   id: string;
   /**
-   * URL prefix for every Service Area, e.g. "service-areas" → /service-areas/<slug>. Leave empty to use /<slug>.
+   * URL prefix for every Location, e.g. "service-areas" → /service-areas/<slug>. Leave empty to use /<slug>.
    */
   pathPrefix?: string | null;
   /**
-   * The design every new Service Area starts from. Use {field} placeholders, e.g. {title}.
+   * The design every new Location starts from. Use {field} placeholders, e.g. {title}.
    */
   sections?:
     | (
@@ -10946,7 +11053,7 @@ export interface ServiceAreasTemplate {
       )[]
     | null;
   /**
-   * Heading of the list of published Service Areas added to the page at the URL prefix (the hub, e.g. /service-areas). Empty: no list.
+   * Heading of the list of published Locations added to the page at the URL prefix (the hub, e.g. /service-areas). Empty: no list.
    */
   hubLinksHeading?: string | null;
   _status?: ('draft' | 'published') | null;
@@ -11885,7 +11992,7 @@ export interface ServicesTemplate {
 export interface ServiceAreaServicesTemplate {
   id: string;
   /**
-   * The design every new Service in Area starts from.
+   * The design every new Local Page starts from.
    */
   sections?:
     | (
@@ -12792,14 +12899,33 @@ export interface ServiceAreaServicesTemplate {
       )[]
     | null;
   /**
-   * Heading of the list on each Service Area page linking to its Services in Areas. Placeholders allowed. Empty: no list.
+   * Heading of the list on each Location page linking to its Local Pages. Placeholders allowed. Empty: no list.
    */
   parentLinksHeading?: string | null;
   /**
-   * Heading of the list on each offered page linking to its Services in Areas. Placeholders allowed. Empty: no list.
+   * Heading of the list on each offered page linking to its Local Pages. Placeholders allowed. Empty: no list.
    */
   childLinksHeading?: string | null;
   _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews-sync".
+ */
+export interface ReviewsSync {
+  id: string;
+  keyMark?: string | null;
+  lastSync?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -15574,6 +15700,17 @@ export interface ServiceAreaServicesTemplateSelect<T extends boolean = true> {
   parentLinksHeading?: T;
   childLinksHeading?: T;
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews-sync_select".
+ */
+export interface ReviewsSyncSelect<T extends boolean = true> {
+  keyMark?: T;
+  lastSync?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

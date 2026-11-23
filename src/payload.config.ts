@@ -3,6 +3,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { parseCookies } from 'payload/shared'
+import { reviewsPlugin } from '@good-shepherd-insights/payload-plugin-reviews'
 import { servicesPlugin } from '@good-shepherd-insights/payload-plugin-services'
 import { sharedBlocks } from '@good-shepherd-insights/website-components/payload'
 import { inlinePreviewAdmin } from './admin/livePreviewConfig'
@@ -154,15 +155,16 @@ export default buildConfig({
   plugins: [
     servicesPlugin({
       adminGroup: 'Services',
-      // Each type's globals under Globals, named by the type: Services, Service Areas, Services in Areas.
-      globals: { group: 'Globals', label: (labels) => labels.plural },
+      // Each type's design under Globals: Service Layout, Location Layout, Local Page Layout.
+      globals: { group: 'Globals', label: (labels) => `${labels.singular} Layout` },
       blocks: [...sharedBlocks],
       combinations: [
         {
           slug: SERVICES_IN_AREAS,
           parent: SERVICE_AREAS,
           child: SERVICES,
-          labels: { singular: 'Service in Area', plural: 'Services in Areas' },
+          labels: { singular: 'Local Page', plural: 'Local Pages' },
+          offeredField: { label: 'Services in this location' },
           tokens: { parent: 'area', child: 'service' },
           // Local proof besides a new photo: a review or before/after block of its own.
           indexing: { minUniqueWords: 150, proofBlocks: ['reviews', 'beforeAfter'] },
@@ -193,7 +195,7 @@ export default buildConfig({
       types: [
         {
           slug: SERVICE_AREAS,
-          labels: { singular: 'Service Area', plural: 'Service Areas' },
+          labels: { singular: 'Location', plural: 'Locations' },
           place: true,
         },
         {
@@ -205,6 +207,8 @@ export default buildConfig({
     }),
     // The plugin adds pair fields to these after overrides.collection.
     pairFieldsIntoContentTab(serviceTypes),
+    // One pool of reviews: manual and, when turned on in .env, synced reviews.
+    reviewsPlugin({ mediaCollection: Media.slug }),
     // Only its endpoints and translations: the SEO tabs above use its field
     // components on the existing fields, so it adds no fields of its own.
     seoPlugin({
