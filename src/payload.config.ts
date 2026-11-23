@@ -7,7 +7,7 @@ import { reviewsPlugin } from '@good-shepherd-insights/payload-plugin-reviews'
 import { servicesPlugin } from '@good-shepherd-insights/payload-plugin-services'
 import { sharedBlocks } from '@good-shepherd-insights/website-components/payload'
 import { inlinePreviewAdmin } from './admin/livePreviewConfig'
-import { deployOnDelete, deployOnGlobalPublish, deployOnPublishChange } from './hooks/websiteDeploy'
+import { deployOnDelete, deployOnGlobalPublish, deployOnPublishChange, deployOnReviews } from './hooks/websiteDeploy'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
@@ -208,7 +208,7 @@ export default buildConfig({
     // The plugin adds pair fields to these after overrides.collection.
     pairFieldsIntoContentTab(serviceTypes),
     // One pool of reviews: manual and, when turned on in .env, synced reviews.
-    reviewsPlugin({ mediaCollection: Media.slug }),
+    reviewsPlugin({ mediaCollection: Media.slug, onChange: deployOnReviews }),
     // Only its endpoints and translations: the SEO tabs above use its field
     // components on the existing fields, so it adds no fields of its own.
     seoPlugin({

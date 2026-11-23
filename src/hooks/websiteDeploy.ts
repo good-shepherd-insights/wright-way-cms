@@ -2,6 +2,7 @@ import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
   GlobalAfterChangeHook,
+  Payload,
   PayloadRequest,
 } from 'payload'
 
@@ -10,7 +11,7 @@ import { websiteDeployWebhook } from '../config/runtime'
 // The website is built from published CMS content, so any change to what is
 // live calls the deploy webhook (WEBSITE_DEPLOY_WEBHOOK_URL) to rebuild it.
 
-async function deployWebsite(req: PayloadRequest) {
+async function deployWebsite(req: Pick<PayloadRequest, 'payload'>) {
   if (!websiteDeployWebhook) return
   try {
     const response = await fetch(websiteDeployWebhook, { method: 'POST' })
@@ -59,3 +60,6 @@ export const deployOnGlobalPublish: GlobalAfterChangeHook = async ({ doc, req })
   if (doc._status === 'published') await deployWebsite(req)
   return doc
 }
+
+/** Reviews changed (payload-plugin-reviews). */
+export const deployOnReviews = (payload: Payload) => deployWebsite({ payload })

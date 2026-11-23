@@ -721,29 +721,43 @@ export interface Section {
         reviewCount?: number | null;
         countLabel: string;
         starsLabel: string;
-        reviews: {
-          author: string;
-          rating?: number | null;
-          text: string;
-          dateLabel: string;
-          /**
-           * Neighborhood or town, e.g. Clover Hill, Frederick
-           */
-          location?: string | null;
-          /**
-           * Service the customer had, e.g. Garage cleanout
-           */
-          service?: string | null;
-          /**
-           * Optional photo the customer posted with the review.
-           */
-          photo?: (string | null) | Media;
-          /**
-           * Optional: Wright Way's public reply on Google.
-           */
-          ownerReply?: string | null;
-          id?: string | null;
-        }[];
+        /**
+         * Automatic: reviews about this page's service or place first, then the rest of the collection.
+         */
+        show?: ('pick' | 'automatic') | null;
+        /**
+         * Shown in this order.
+         */
+        picks?: (string | Review)[] | null;
+        /**
+         * e.g. {platform} review · {date}
+         */
+        sourceLabel?: string | null;
+        reviews?:
+          | {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         reviewLinkLabel?: string | null;
         /**
          * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -1141,6 +1155,61 @@ export interface Section {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  author: string;
+  kind: 'text' | 'video';
+  text?: string | null;
+  /**
+   * For video reviews: where it can be watched.
+   */
+  videoUrl?: string | null;
+  rating?: number | null;
+  date?: string | null;
+  /**
+   * Where the review was posted.
+   */
+  sourceUrl?: string | null;
+  platform?: string | null;
+  photos?: (string | Media)[] | null;
+  photoUrls?: string[] | null;
+  location?: string | null;
+  service?: string | null;
+  ownerReply?: string | null;
+  /**
+   * Only approved reviews are public.
+   */
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  featured?: boolean | null;
+  /**
+   * Higher numbers come first.
+   */
+  position?: number | null;
+  tags?: string[] | null;
+  source: 'manual' | 'synced';
+  synced?: {
+    testimonialId?: string | null;
+    projectId?: string | null;
+    approved?: boolean | null;
+    tags?: string[] | null;
+    hash?: string | null;
+    revision?: number | null;
+    sendingUntil?: string | null;
+    statusChanged?: boolean | null;
+    removed?: boolean | null;
+    pending?: boolean | null;
+    lastError?: string | null;
+  };
+  key: string;
+  mergedInto?: string | null;
+  notDuplicateOf?: string[] | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1638,29 +1707,43 @@ export interface Page {
         reviewCount?: number | null;
         countLabel: string;
         starsLabel: string;
-        reviews: {
-          author: string;
-          rating?: number | null;
-          text: string;
-          dateLabel: string;
-          /**
-           * Neighborhood or town, e.g. Clover Hill, Frederick
-           */
-          location?: string | null;
-          /**
-           * Service the customer had, e.g. Garage cleanout
-           */
-          service?: string | null;
-          /**
-           * Optional photo the customer posted with the review.
-           */
-          photo?: (string | null) | Media;
-          /**
-           * Optional: Wright Way's public reply on Google.
-           */
-          ownerReply?: string | null;
-          id?: string | null;
-        }[];
+        /**
+         * Automatic: reviews about this page's service or place first, then the rest of the collection.
+         */
+        show?: ('pick' | 'automatic') | null;
+        /**
+         * Shown in this order.
+         */
+        picks?: (string | Review)[] | null;
+        /**
+         * e.g. {platform} review · {date}
+         */
+        sourceLabel?: string | null;
+        reviews?:
+          | {
+              author: string;
+              rating?: number | null;
+              text: string;
+              dateLabel: string;
+              /**
+               * Neighborhood or town, e.g. Clover Hill, Frederick
+               */
+              location?: string | null;
+              /**
+               * Service the customer had, e.g. Garage cleanout
+               */
+              service?: string | null;
+              /**
+               * Optional photo the customer posted with the review.
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Optional: Wright Way's public reply on Google.
+               */
+              ownerReply?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         reviewLinkLabel?: string | null;
         /**
          * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -2590,29 +2673,43 @@ export interface ServiceArea {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -3527,29 +3624,43 @@ export interface Service {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -4459,29 +4570,43 @@ export interface ServiceAreaService {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -4896,61 +5021,6 @@ export interface ServiceAreaService {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reviews".
- */
-export interface Review {
-  id: string;
-  author: string;
-  kind: 'text' | 'video';
-  text?: string | null;
-  /**
-   * For video reviews: where it can be watched.
-   */
-  videoUrl?: string | null;
-  rating?: number | null;
-  date?: string | null;
-  /**
-   * Where the review was posted.
-   */
-  sourceUrl?: string | null;
-  platform?: string | null;
-  photos?: (string | Media)[] | null;
-  photoUrls?: string[] | null;
-  location?: string | null;
-  service?: string | null;
-  ownerReply?: string | null;
-  /**
-   * Only approved reviews are public.
-   */
-  status?: ('pending' | 'approved' | 'rejected') | null;
-  featured?: boolean | null;
-  /**
-   * Higher numbers come first.
-   */
-  position?: number | null;
-  tags?: string[] | null;
-  source: 'manual' | 'synced';
-  synced?: {
-    testimonialId?: string | null;
-    projectId?: string | null;
-    approved?: boolean | null;
-    tags?: string[] | null;
-    hash?: string | null;
-    revision?: number | null;
-    sendingUntil?: string | null;
-    statusChanged?: boolean | null;
-    removed?: boolean | null;
-    pending?: boolean | null;
-    lastError?: string | null;
-  };
-  key: string;
-  mergedInto?: string | null;
-  notDuplicateOf?: string[] | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
@@ -5847,6 +5917,9 @@ export interface SectionsSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -6752,6 +6825,9 @@ export interface PagesSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -7679,6 +7755,9 @@ export interface ServiceAreasSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -8591,6 +8670,9 @@ export interface ServicesSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -9502,6 +9584,9 @@ export interface ServiceAreaServicesSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -10634,29 +10719,43 @@ export interface ServiceAreasTemplate {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -11559,29 +11658,43 @@ export interface ServicesTemplate {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -12480,29 +12593,43 @@ export interface ServiceAreaServicesTemplate {
             reviewCount?: number | null;
             countLabel: string;
             starsLabel: string;
-            reviews: {
-              author: string;
-              rating?: number | null;
-              text: string;
-              dateLabel: string;
-              /**
-               * Neighborhood or town, e.g. Clover Hill, Frederick
-               */
-              location?: string | null;
-              /**
-               * Service the customer had, e.g. Garage cleanout
-               */
-              service?: string | null;
-              /**
-               * Optional photo the customer posted with the review.
-               */
-              photo?: (string | null) | Media;
-              /**
-               * Optional: Wright Way's public reply on Google.
-               */
-              ownerReply?: string | null;
-              id?: string | null;
-            }[];
+            /**
+             * Automatic: reviews about this page's service or place first, then the rest of the collection.
+             */
+            show?: ('pick' | 'automatic') | null;
+            /**
+             * Shown in this order.
+             */
+            picks?: (string | Review)[] | null;
+            /**
+             * e.g. {platform} review · {date}
+             */
+            sourceLabel?: string | null;
+            reviews?:
+              | {
+                  author: string;
+                  rating?: number | null;
+                  text: string;
+                  dateLabel: string;
+                  /**
+                   * Neighborhood or town, e.g. Clover Hill, Frederick
+                   */
+                  location?: string | null;
+                  /**
+                   * Service the customer had, e.g. Garage cleanout
+                   */
+                  service?: string | null;
+                  /**
+                   * Optional photo the customer posted with the review.
+                   */
+                  photo?: (string | null) | Media;
+                  /**
+                   * Optional: Wright Way's public reply on Google.
+                   */
+                  ownerReply?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
             reviewLinkLabel?: string | null;
             /**
              * Direct Google review form link (from Google Business Profile > Ask for reviews).
@@ -13541,6 +13668,9 @@ export interface ServiceAreasTemplateSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -14447,6 +14577,9 @@ export interface ServicesTemplateSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
@@ -15352,6 +15485,9 @@ export interface ServiceAreaServicesTemplateSelect<T extends boolean = true> {
               reviewCount?: T;
               countLabel?: T;
               starsLabel?: T;
+              show?: T;
+              picks?: T;
+              sourceLabel?: T;
               reviews?:
                 | T
                 | {
